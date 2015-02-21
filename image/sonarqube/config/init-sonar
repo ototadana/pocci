@@ -1,0 +1,16 @@
+
+sed -i 's|#wrapper.java.additional.6=-server|wrapper.java.additional.6=-server|g' /opt/sonar/conf/wrapper.conf
+sed -i "s|.*sonar.jdbc.username=.*|sonar.jdbc.username=${DB_ENV_DB_USER}|g" /opt/sonar/conf/sonar.properties
+sed -i "s|.*sonar.jdbc.password=.*|sonar.jdbc.password=${DB_ENV_DB_PASS}|g" /opt/sonar/conf/sonar.properties
+sed -i "s|.*sonar.jdbc.url=jdbc:postgresql:.*|sonar.jdbc.url=jdbc:postgresql://db/${DB_ENV_DB_NAME}|g" /opt/sonar/conf/sonar.properties
+sed -i "s|#sonar.web.context=|sonar.web.context=${SONAR_WEB_CONTEXT=/}|g" /opt/sonar/conf/sonar.properties
+
+echo sonar.security.realm=${SONAR_SECURITY_REALM} >>/opt/sonar/conf/sonar.properties
+echo sonar.security.savePassword=true >>/opt/sonar/conf/sonar.properties
+echo ldap.url=ldap://ldap >>/opt/sonar/conf/sonar.properties
+echo ldap.bindDn=${LDAP_BIND_DN} >>/opt/sonar/conf/sonar.properties
+echo ldap.bindPassword=${LDAP_BIND_PASSWORD} >>/opt/sonar/conf/sonar.properties
+echo ldap.user.baseDn=${LDAP_BASE_DN} >>/opt/sonar/conf/sonar.properties
+echo ldap.user.request=\(${LDAP_UID=uid}={login}\) >>/opt/sonar/conf/sonar.properties
+echo ldap.user.realNameAttribute=${LDAP_REAL_NAME=cn} >>/opt/sonar/conf/sonar.properties
+echo ldap.user.emailAttribute=${LDAP_MAIL=mail} >>/opt/sonar/conf/sonar.properties

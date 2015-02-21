@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+if [ -f /config/init ]; then
+  . /config/init
+fi
+
+start-stop-daemon --start --quiet --background --exec /usr/bin/Xvfb -- ${DISPLAY} -screen 0 ${SCREEN_WxHxD} -ac +extension RANDR
+exec "$@"

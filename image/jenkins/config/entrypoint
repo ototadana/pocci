@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+if [ ! -f ${JENKINS_HOME}/.initialized ]; then
+  . /config/init-jenkinshome
+  touch ${JENKINS_HOME}/.initialized
+fi
+
+exec "$@"

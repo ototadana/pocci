@@ -1,0 +1,13 @@
+
+git config --global user.email "jenkins@example.com"
+git config --global user.name "Jenkins"
+
+if [ ! -d ${JENKINS_HOME}/.ssh ]; then
+  mkdir ${JENKINS_HOME}/.ssh
+fi
+
+ssh-keygen -t rsa -N "" -f ${JENKINS_HOME}/.ssh/id_rsa
+
+echo "---- ${JENKINS_HOME}/.ssh/id_rsa.pub ----"
+cat ${JENKINS_HOME}/.ssh/id_rsa.pub
+echo "----"

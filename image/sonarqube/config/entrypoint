@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+if [ ! -f /opt/sonar/.initialized ]; then
+  . /config/init-sonar
+  touch /opt/sonar/.initialized
+fi
+
+exec "$@"
