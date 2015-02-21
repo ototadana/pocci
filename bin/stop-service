@@ -1,0 +1,11 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+. ${BASE_DIR}/bin/init-env
+
+${BIN_DIR}/docker-service stop
+
+set +e
+${BIN_DIR}/docker-service -f jenkins-slaves.yml stop
+exit 0

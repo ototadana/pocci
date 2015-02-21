@@ -1,0 +1,24 @@
+{
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jshint": "^0.11.0",
+    "grunt-mocha-test": "^0.12.7",
+    "mocha": "^2.1.0"
+  },
+  "dependencies": {
+    "co": "^4.1.0",
+    "co-child-process": "0.0.3",
+    "co-request": "^0.2.0",
+    "jenkins": "^0.7.0",
+    "ldapjs": "^0.7.1",
+    "requestretry": "^1.2.2",
+    "selenium-standalone": "^2.44.0-7",
+    "ssha": "^1.0.1",
+    "thunkify": "^2.1.2",
+    "webdriverio": "^2.4.5",
+    "yaml": "^0.2.3"
+  }
+}

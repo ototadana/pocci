@@ -1,0 +1,21 @@
+java:
+  image: ototadana/jenkins-slave-java
+  env_file:
+    - ./java.env
+    - ./.env
+  external_links:
+    - service_portal_1:server
+    - service_jenkins_1:jenkins
+  environment:
+    - JENKINS_URL=http://jenkins:8080/jenkins
+
+nodejs:
+  image: ototadana/jenkins-slave-nodejs
+  env_file:
+    - ./nodejs.env
+    - ./.env
+  external_links:
+    - service_portal_1:server
+    - service_jenkins_1:jenkins
+  environment:
+    - JENKINS_URL=http://jenkins:8080/jenkins

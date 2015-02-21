@@ -1,0 +1,12 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+. ${BASE_DIR}/bin/init-env
+
+JENKINS=http://server/jenkins
+
+${BIN_DIR}/docker-service start
+${BIN_DIR}/waitfor ${JENKINS}
+
+${BIN_DIR}/docker-service -f jenkins-slaves.yml start

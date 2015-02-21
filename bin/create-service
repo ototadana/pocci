@@ -1,0 +1,40 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+. ${BASE_DIR}/bin/init-env
+
+PORTAL=http://server
+JENKINS=http://server/jenkins
+SONAR=http://server/sonar
+LDAP=http://server/ldap
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+. ${BASE_DIR}/bin/init-env
+
+#echo "STEP 0: Pull service images."
+#${BIN_DIR}/docker-service pull
+#${BIN_DIR}/docker-service -f jenkins-slaves.yml pull
+
+echo "STEP 0: Create '${CONFIG_DIR}/.env'"
+${BIN_DIR}/yaml2env
+
+echo "STEP 1: Create & start services."
+${BIN_DIR}/docker-service up -d
+${BIN_DIR}/waitfor ${PORTAL} ${JENKINS} ${SONAR} ${LDAP}
+
+echo "STEP 2: Update Jenkins plugins."
+docker exec -it service_jenkins_1 /config/update-plugins.sh
+
+echo "STEP 3: Restart Jenkins."
+${BIN_DIR}/oneoff iojs curl -X POST ${JENKINS}/restart
+${BIN_DIR}/waitfor ${JENKINS}
+
+echo "STEP 4: Apply user settings."
+${BIN_DIR}/setup
+
+echo "STEP 5: Start Jenkins slaves."
+cp ${TEMP_CONFIG_DIR}/*.env ${CONFIG_DIR}
+${BIN_DIR}/docker-service -f jenkins-slaves.yml up -d
+
+echo "Done."

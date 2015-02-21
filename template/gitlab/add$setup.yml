@@ -1,0 +1,25 @@
+
+gitlab:
+  groups:
+    -
+      groupName: example
+      projects:
+        -
+          projectName: example-java
+          issues:
+            - import example codes
+        -
+          projectName: example-nodejs
+          issues:
+            - import example codes
+
+git:
+  repositories:
+    -
+      remotePath:     /example/example-java.git
+      localPath:      ./config/code/example-java
+      commitMessage:  import example codes (#1)
+    -
+      remotePath:     /example/example-nodejs.git
+      localPath:      ./config/code/example-nodejs
+      commitMessage:  import example codes (#1)

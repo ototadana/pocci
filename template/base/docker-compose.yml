@@ -1,0 +1,69 @@
+openldap:
+  image: ototadana/openldap
+  env_file:
+    - ./.env
+  volumes:
+    - /var/lib/ldap
+    - /etc/ldap/slapd.d
+    - /etc/ldap/ssl
+  ports:
+    - "389:389"
+
+sonarqubedb:
+  image: sameersbn/postgresql:9.1-1
+  env_file:
+    - ./.env
+  environment:
+    - DB_USER=sonarqube
+    - DB_PASS=sonarqubepass
+    - DB_NAME=sonarqubedb
+
+jenkins:
+  image: ototadana/jenkins
+  env_file:
+    - ./.env
+  environment:
+    - JENKINS_OPTS=--prefix=/jenkins
+  links:
+    - sonarqube:sonar
+    - portal:server
+    - openldap:ldap
+  ports:
+    - "50000:50000"
+
+phpldapadmin:
+  image: ototadana/phpldapadmin
+  env_file:
+    - ./.env
+  links:
+   - openldap:ldap
+  environment:
+    - LDAP_HOST=ldap
+
+sonarqube:
+  image: ototadana/sonarqube
+  env_file:
+    - ./.env
+  environment:
+    - SONAR_WEB_CONTEXT=/sonar
+    - SONAR_SECURITY_REALM=LDAP
+    - LDAP_UID=uid
+    - LDAP_REAL_NAME=cn
+    - LDAP_MAIL=mail
+  links:
+    - sonarqubedb:db
+    - openldap:ldap
+
+nginx:
+  image: nginx:1.7.9
+  env_file:
+    - ./.env
+  links:
+   - portal:portal
+   - sonarqube:sonarqube
+   - jenkins:jenkins
+   - phpldapadmin:ldapadmin
+  volumes:
+   - ./nginx:/etc/nginx/conf.d
+  ports:
+    - "80:80"

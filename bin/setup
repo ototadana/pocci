@@ -1,0 +1,12 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+. ${BASE_DIR}/bin/init-env
+
+rm -fr ${TEMP_CONFIG_DIR}
+mkdir ${TEMP_CONFIG_DIR}
+cp -r ${CONFIG_DIR}/* ${TEMP_CONFIG_DIR}
+
+cd ${JS_DIR}
+${BIN_DIR}/oneoff iojs node ./app.js

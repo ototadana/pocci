@@ -1,0 +1,8 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+. ${BASE_DIR}/bin/init-env
+
+cd ${BIN_DIR}
+./oneoff iojs node -e "require('./js/lib/wait.js')(process.argv.slice(1))" "$@"

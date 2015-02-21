@@ -1,0 +1,29 @@
+iojs:
+  image:        ototadana/jenkins-slave-iojs
+  privileged:   true
+  working_dir:  /app
+  volumes:
+    - ${PWD}:/app
+  external_links:
+    - service_nginx_1:server
+    - service_openldap_1:ldap
+
+java:
+  image:        ototadana/jenkins-slave-java
+  privileged:   true
+  working_dir:  /app
+  volumes:
+    - ${PWD}:/app
+  external_links:
+    - service_nginx_1:server
+    - service_openldap_1:ldap
+
+nodejs:
+  image:        ototadana/jenkins-slave-nodejs
+  privileged:   true
+  working_dir:  /app
+  volumes:
+    - ${PWD}:/app
+  external_links:
+    - service_nginx_1:server
+    - service_openldap_1:ldap

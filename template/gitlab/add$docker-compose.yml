@@ -1,0 +1,30 @@
+
+gitlabdb:
+  image: sameersbn/postgresql:9.1-1
+  env_file:
+    - ./.env
+  environment:
+    - DB_USER=gitlab
+    - DB_PASS=secretpassword
+    - DB_NAME=gitlabhq_production
+
+redis:
+  image: sameersbn/redis:latest
+  env_file:
+    - ./.env
+
+portal:
+  image: sameersbn/gitlab:7.7.2
+  env_file:
+    - ./.env
+  environment:
+    - LDAP_ENABLED=true
+    - LDAP_HOST=ldap
+    - LDAP_PORT=389
+    - LDAP_UID=uid
+    - LDAP_METHOD=plain
+    - LDAP_ACTIVE_DIRECTORY=false
+  links:
+    - redis:redisio
+    - gitlabdb:postgresql
+    - openldap:ldap

@@ -1,0 +1,42 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+CONFIG_DIR=${BASE_DIR}/config
+
+if [ -d ${CONFIG_DIR} ]; then
+    rm -r ${CONFIG_DIR}
+fi
+
+mkdir ${CONFIG_DIR}
+
+echo ""
+echo "Which software would you like to use as portal site"
+PS3='Input a number to select : '
+options=("GitLab" "ALMinium (Redmine)")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "GitLab")
+            echo "- GitLab -"
+            TEMPLATE_TYPE=gitlab
+            break
+            ;;
+        "ALMinium (Redmine)")
+            echo "- ALMinium -"
+            TEMPLATE_TYPE=alminium
+            break
+            ;;
+        *)  ;;
+    esac
+done
+
+cp -r ${BASE_DIR}/template/base/* ${CONFIG_DIR}
+cp -r ${BASE_DIR}/template/${TEMPLATE_TYPE}/* ${CONFIG_DIR}
+
+cd ${CONFIG_DIR}
+for i in $(ls add\$*); do
+    DST_FILE=`echo $i | cut -d $ -f 2`
+    cat $i >>${DST_FILE}
+    rm $i
+done

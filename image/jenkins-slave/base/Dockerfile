@@ -1,0 +1,24 @@
+FROM java:openjdk-8-jdk
+MAINTAINER ototadana@gmail.com
+
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list \
+    && echo "deb http://packages.linuxmint.com debian import " > /etc/apt/sources.list.d/firefox.list \
+    && apt-get update \
+    && apt-get install -y --force-yes firefox google-chrome-stable vim xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+COPY ./config/. /config/
+RUN chmod +x /config/*
+
+WORKDIR /tmp
+
+ENTRYPOINT ["/config/entrypoint"]
+CMD ["/config/startJenkinsSlave.sh"]
+
+ENV DISPLAY :99
+ENV SCREEN_WxHxD 1024x768x24
+ENV JENKINS_URL http://jenkins:8080/jenkins
+ENV NODE_NAME node1
