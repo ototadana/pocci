@@ -3,7 +3,7 @@ PoCCi
 
 A try of CI Services by Docker containers.
 
-![Services](./services-gitlab.svg)
+![Services](./services-gitlab.png)
 
 [日本語](./README.ja.md)
 

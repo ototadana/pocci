@@ -3,7 +3,7 @@ PoCCi
 
 Docker コンテナを使った CIサービス構築の試作。
 
-![Services](./services-gitlab.svg)
+![Services](./services-gitlab.png)
 
 [English](./README.md)
 
