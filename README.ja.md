@@ -16,15 +16,25 @@ Docker コンテナを使った CIサービス構築の試作。
 ------
 1.  このリポジトリをクローンする。
 
-2.  `bin/generate-config-from-template` を実行して `config` ディレクトリを作成する。
-
-    cd bin
     ```bash
-    chmod +x *
-    bash ./generate-config-from-template
+    git clone https://github.com/ototadana/pocci.git
+    cd pocci
     ```
 
-3.  config ディレクトリに作成されたファイルを確認し、必要に応じて編集する。
+2.  ビルドを行う。
+
+    ```bash
+    cd bin
+    bash ./build
+    ```
+
+3.  `generate-config-from-template` を実行して `config` ディレクトリを作成する。
+
+    ```bash
+    ./generate-config-from-template
+    ```
+
+4.  `config` ディレクトリに作成されたファイルを確認し、必要に応じて編集する。
 
     ```
     config/
@@ -33,14 +43,19 @@ Docker コンテナを使った CIサービス構築の試作。
       - setup.yml          ... ユーザー設定
     ```
 
-4.  `bin/create-service` を実行してサービスの作成と開始を行う。
+5.  `create-service` を実行してサービスの作成と開始を行う。
 
     ```bash
-    cd bin
-    bash ./create-service
+    ./create-service
     ```
 
-5.  以下の URL にアクセスしてサービスを利用する。
+6.  `apply-user-settings` を実行してユーザー設定 (`setup.yml`) を適用する。
+
+    ```bash
+    ./apply-user-settings
+    ```
+
+7.  以下の URL にアクセスしてサービスを利用する。
 
     *   http://localhost/ ... GitLab / ALMinium (Redmine)
     *   http://localhost/jenkins ... Jenkins

@@ -44,7 +44,6 @@ var loginByAdmin = function*(browser, url) {
   yield __loginByAdmin(browser, url, password);
   yield newPassword(browser, url, password);
   yield __loginByAdmin(browser, url, password);
-  browser.saveScreenshot('screen.png');
   yield browser.yieldable.call();
 };
 

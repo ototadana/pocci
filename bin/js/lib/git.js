@@ -19,6 +19,7 @@ var importCode = function*(url, options, ldapUsers) {
   var remoteUrl = toRemoteURL(url, user, options.remotePath);
   var shellScript = path.resolve(__dirname, 'git-import.sh');
   var args = [
+    shellScript,
     remoteUrl,
     options.localPath,
     user.uid,
@@ -26,7 +27,7 @@ var importCode = function*(url, options, ldapUsers) {
     options.commitMessage
   ];
 
-  yield spawn(shellScript, args, {stdio: 'inherit'});
+  yield spawn('/bin/bash', args, {stdio: 'inherit'});
 };
 
 module.exports = {

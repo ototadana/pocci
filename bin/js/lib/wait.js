@@ -17,7 +17,7 @@ module.exports = function(url) {
     requestretry({
       url: url[i],
       json:false,
-      maxAttempts: 600,
+      maxAttempts:1200,
       retryDelay: 1000,
       retryStrategy: requestretry.RetryStrategies.HTTPOrNetworkError
     }, handleResponse);

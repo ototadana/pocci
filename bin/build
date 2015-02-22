@@ -1,0 +1,12 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+BIN_DIR=${BASE_DIR}/bin
+JS_DIR=${BIN_DIR}/js
+
+cd ${BIN_DIR}
+chmod +x *
+
+cd ${JS_DIR}
+docker run -w /app -v `pwd`:/app --rm -it ototadana/jenkins-slave-nodejs npm install --no-bin-links

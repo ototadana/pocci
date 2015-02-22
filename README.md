@@ -16,15 +16,25 @@ Usage
 -----
 1.  Clone this repository.
 
-2.  Create `config` directory from template by `bin/generate-config-from-template`.
+    ```bash
+    git clone https://github.com/ototadana/pocci.git
+    cd pocci
+    ```
+
+2.  Build setup tools.
 
     ```bash
     cd bin
-    chmod +x *
-    bash ./generate-config-from-template
+    bash ./build
     ```
 
-3.  Check and edit the files in `config` directory.
+3.  Create `config` directory from template by `generate-config-from-template`.
+
+    ```bash
+    ./generate-config-from-template
+    ```
+
+4.  Check and edit the files in `config` directory.
 
     ```
     config/
@@ -33,14 +43,19 @@ Usage
       - setup.yml          ... User settings
     ```
 
-4.  Create and start services by `bin/create-service`
+5.  Create and start services by `create-service`.
 
     ```bash
-    cd bin
-    bash ./create-service
+    ./create-service
     ```
 
-5.  Use the services.
+6.  Apply user settings (`setup.yml`) by `apply-user-settings`.
+
+    ```bash
+    ./apply-user-settings
+    ```
+
+7.  Use the services.
 
     *   http://localhost/ ... GitLab / ALMinium (Redmine)
     *   http://localhost/jenkins ... Jenkins
