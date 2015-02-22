@@ -5,7 +5,7 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list \
     && echo "deb http://packages.linuxmint.com debian import " > /etc/apt/sources.list.d/firefox.list \
     && apt-get update \
-    && apt-get install -y --force-yes firefox google-chrome-stable vim xvfb \
+    && apt-get install -y --force-yes firefox google-chrome-stable make vim xvfb \
     && rm -rf /var/lib/apt/lists/*
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
