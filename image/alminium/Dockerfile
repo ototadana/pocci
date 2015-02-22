@@ -7,6 +7,9 @@ WORKDIR /
 RUN git clone https://github.com/alminium/alminium.git
 
 WORKDIR /alminium
+
+RUN sed -i "s/redmine_code_review,default/redmine_code_review,0.6.5/g" /alminium/config/redmine-plugins.lst
+
 RUN export ALM_HOSTNAME="localhost" \
     && export SSL="N" \
     && export ENABLE_JENKINS="n" \
