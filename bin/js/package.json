@@ -15,7 +15,7 @@
     "jenkins": "^0.7.0",
     "ldapjs": "^0.7.1",
     "requestretry": "^1.2.2",
-    "selenium-standalone": "2.44.0-7",
+    "selenium-standalone": "4.1.0",
     "ssha": "^1.0.1",
     "thunkify": "^2.1.2",
     "webdriverio": "^2.4.5",

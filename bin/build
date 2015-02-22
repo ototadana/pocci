@@ -10,3 +10,4 @@ chmod +x *
 
 cd ${JS_DIR}
 docker run -w /app -v `pwd`:/app --rm -it ototadana/jenkins-slave-nodejs npm install --no-bin-links
+docker run -w /app -v `pwd`:/app --rm -it ototadana/jenkins-slave-nodejs /app/node_modules/selenium-standalone/bin/selenium-standalone install
