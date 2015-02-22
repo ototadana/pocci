@@ -38,9 +38,11 @@ Usage
 
     ```
     config/
-      - docker-compose.yml ... Service composition (Docker Compose file)
-      - jenkins-slaves.yml ... Jenkins slave nodes (Docker Compose file)
-      - setup.yml          ... User settings
+      - code/               ... Example codes
+      - nginx/              ... Nginx reverse proxy configuration
+      - docker-compose.yml  ... Service composition (Docker Compose file)
+      - jenkins-slaves.yml  ... Jenkins slave nodes (Docker Compose file)
+      - setup.yml           ... User settings
     ```
 
 5.  Create and start services by `create-service`.

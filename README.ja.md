@@ -38,9 +38,11 @@ Docker コンテナを使った CIサービス構築の試作。
 
     ```
     config/
-      - docker-compose.yml ... サービス構成 (Docker Compose 形式)
-      - jenkins-slaves.yml ... Jenkins スレーブノード (Docker Compose 形式)
-      - setup.yml          ... ユーザー設定
+      - code/               ... サンプルコード
+      - nginx/              ... Nginx リバースプロキシ設定
+      - docker-compose.yml  ... サービス構成 (Docker Compose 形式)
+      - jenkins-slaves.yml  ... Jenkins スレーブノード (Docker Compose 形式)
+      - setup.yml           ... ユーザー設定
     ```
 
 5.  `create-service` を実行してサービスの作成と開始を行う。
