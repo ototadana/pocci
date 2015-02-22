@@ -12,7 +12,7 @@ RUN echo "jenkins ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
 COPY ./config/. /config/
 RUN mkdir /config/plugins
 RUN chown -R jenkins:jenkins /config
-RUN chmod +x /config/*.sh
+RUN chmod +x /config/*
 
 USER jenkins
 RUN jar tf /usr/share/jenkins/jenkins.war WEB-INF/plugins \
