@@ -22,7 +22,7 @@ ${BIN_DIR}/docker-service up -d
 ${BIN_DIR}/waitfor ${JENKINS}
 
 echo "STEP 2: Update Jenkins plugins."
-docker exec -it service_jenkins_1 /config/update-plugins.sh
+docker exec -it poccis_jenkins_1 /config/update-plugins.sh
 
 echo "STEP 3: Restart Jenkins."
 ${BIN_DIR}/oneoff iojs curl --noproxy server -X POST ${JENKINS}/restart

@@ -6,8 +6,8 @@ java:
     - ./java.env
     - ./.env
   external_links:
-    - service_portal_1:server
-    - service_jenkins_1:jenkins
+    - poccis_portal_1:server
+    - poccis_jenkins_1:jenkins
   environment:
     - JENKINS_URL=http://jenkins:8080/jenkins
 
@@ -19,7 +19,7 @@ nodejs:
     - ./nodejs.env
     - ./.env
   external_links:
-    - service_portal_1:server
-    - service_jenkins_1:jenkins
+    - poccis_portal_1:server
+    - poccis_jenkins_1:jenkins
   environment:
     - JENKINS_URL=http://jenkins:8080/jenkins
