@@ -15,6 +15,7 @@ LDAP=http://server/ldap
 
 echo "STEP 0: Create '${CONFIG_DIR}/.env'"
 ${BIN_DIR}/yaml2env
+${BIN_DIR}/save-config "create .env file from setup.yml"
 
 echo "STEP 1: Create & start services."
 ${BIN_DIR}/docker-service up -d
@@ -24,7 +25,7 @@ echo "STEP 2: Update Jenkins plugins."
 docker exec -it service_jenkins_1 /config/update-plugins.sh
 
 echo "STEP 3: Restart Jenkins."
-${BIN_DIR}/oneoff iojs curl -X POST ${JENKINS}/restart
+${BIN_DIR}/oneoff iojs curl --noproxy server -X POST ${JENKINS}/restart
 ${BIN_DIR}/waitfor ${PORTAL} ${JENKINS} ${SONAR} ${LDAP}
 
 echo "Done."

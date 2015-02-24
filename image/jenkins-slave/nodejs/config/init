@@ -1,2 +1,6 @@
+source /config/base.proxy
+
 source /usr/local/nvm/nvm.sh
 nvm use stable >/dev/null
+
+source /config/nodejs.proxy

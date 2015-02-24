@@ -5,10 +5,12 @@ BASE_DIR=$(cd $(dirname $0)/..; pwd)
 CONFIG_DIR=${BASE_DIR}/config
 
 if [ -d ${CONFIG_DIR} ]; then
-    rm -r ${CONFIG_DIR}
+    if [ `ls ${CONFIG_DIR} | wc -l` != "0" ]; then
+        rm -r ${CONFIG_DIR}/*
+    fi
+else
+    mkdir ${CONFIG_DIR}
 fi
-
-mkdir ${CONFIG_DIR}
 
 echo ""
 echo "Which software would you like to use as portal site"
@@ -40,3 +42,9 @@ for i in $(ls add\$*); do
     cat $i >>${DST_FILE}
     rm $i
 done
+
+if [ ! -d ${CONFIG_DIR}/.git ]; then
+    git init
+fi
+
+${BASE_DIR}/bin/save-config "create from ${TEMPLATE_TYPE} template"

@@ -1,0 +1,20 @@
+if [ -n "${http_proxy}" ]; then
+    npm -g config set proxy "${http_proxy}"
+fi
+
+if [ -n "${https_proxy}" ]; then
+    npm -g config set https-proxy "${https_proxy}"
+    npm -g config set registry http://registry.npmjs.org/
+fi
+
+if [ -n "${http_proxy}" -a ! -f ~/.bowerrc ]; then
+    echo "{" >~/.bowerrc
+    echo "\"strict-ssl\": false," >>~/.bowerrc
+    echo "\"proxy\": \"${http_proxy}\"" >>~/.bowerrc
+
+    if [ -n "${https_proxy}" ]; then
+      echo "\"https-proxy\": \"${https_proxy}\"" >>~/.bowerrc
+    fi
+
+    echo "}" >>~/.bowerrc
+fi

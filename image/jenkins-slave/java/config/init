@@ -1,1 +1,3 @@
+source /config/base.proxy
 source /etc/profile.d/maven.sh
+source /config/java.proxy

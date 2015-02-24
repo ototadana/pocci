@@ -4,4 +4,8 @@ set -eu
 BASE_DIR=$(cd $(dirname $0)/..; pwd)
 . ${BASE_DIR}/bin/init-env
 
+if [ ! -f ./.env ]; then
+    cp ${CONFIG_DIR}/.env .
+fi
+
 docker-compose -p oneoff -f ${CONFIG_DIR}/oneoff.yml run --rm "$@"

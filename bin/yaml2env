@@ -10,5 +10,13 @@ set +e
 docker run -w /app -v `pwd`:/app --rm -it ototadana/jenkins-slave-iojs \
        iojs -e "require('./bin/js/lib/yaml2env.js')('config/setup.yml')" >${CONFIG_DIR}/.env
 RC=$?
-cat ${CONFIG_DIR}/.env
-exit ${RC}
+
+set -e
+if [ $RC -ne 0 ]; then
+    cat ${CONFIG_DIR}/.env
+    exit ${RC}
+fi
+
+if [ -f ${BIN_DIR}/proxy.env ]; then
+    cat ${BIN_DIR}/proxy.env >>${CONFIG_DIR}/.env
+fi

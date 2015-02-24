@@ -7,6 +7,8 @@ iojs:
   external_links:
     - service_nginx_1:server
     - service_openldap_1:ldap
+  env_file:
+    - ./.env
 
 java:
   image:        ototadana/jenkins-slave-java
@@ -17,6 +19,8 @@ java:
   external_links:
     - service_nginx_1:server
     - service_openldap_1:ldap
+  env_file:
+    - ./.env
 
 nodejs:
   image:        ototadana/jenkins-slave-nodejs
@@ -27,3 +31,5 @@ nodejs:
   external_links:
     - service_nginx_1:server
     - service_openldap_1:ldap
+  env_file:
+    - ./.env

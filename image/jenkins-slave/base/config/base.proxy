@@ -1,0 +1,14 @@
+if [ -n "${https_proxy}" ]; then
+    git config --global url."https://".insteadOf git://
+fi
+
+if [ -n "${http_proxy_host}" -a ! -f ~/.curlrc ]; then
+    if [ -n "${http_proxy_port}" ]; then
+        echo proxy = \""http://"${http_proxy_host}:${http_proxy_port}\" >~/.curlrc
+    else
+        echo proxy = \""http://"${http_proxy_host}\" >~/.curlrc
+    fi
+    if [ -n "${http_proxy_userpass}" ]; then
+      echo proxy-user = \"${http_proxy_userpass}\" >>~/.curlrc
+    fi
+fi

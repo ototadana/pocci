@@ -10,5 +10,6 @@ ${BIN_DIR}/setup
 echo "STEP 2: Start Jenkins slaves."
 cp ${TEMP_CONFIG_DIR}/*.env ${CONFIG_DIR}
 ${BIN_DIR}/docker-service -f jenkins-slaves.yml up -d
+${BIN_DIR}/save-config "create *.env file of jenkins slaves"
 
 echo "Done."
