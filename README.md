@@ -10,7 +10,7 @@ A try of CI Services by Docker containers.
 Requirement
 -----------
 *   [Docker](https://www.docker.com/)
-*   [Docker Compose](https://github.com/docker/fig/)
+*   [Docker Compose](https://github.com/docker/compose/)
 
 Usage
 -----

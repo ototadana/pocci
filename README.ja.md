@@ -10,7 +10,7 @@ Docker コンテナを使った CIサービス構築の試作。
 必須ソフトウェア
 ----------------
 *   [Docker](https://www.docker.com/)
-*   [Docker Compose](https://github.com/docker/fig/)
+*   [Docker Compose](https://github.com/docker/compose/)
 
 利用法
 ------
