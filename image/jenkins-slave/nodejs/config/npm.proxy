@@ -1,0 +1,8 @@
+if [ -n "${http_proxy}" ]; then
+    npm -g config set proxy "${http_proxy}"
+fi
+
+if [ -n "${https_proxy}" ]; then
+    npm -g config set https-proxy "${https_proxy}"
+    npm -g config set registry http://registry.npmjs.org/
+fi

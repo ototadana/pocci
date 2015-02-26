@@ -11,5 +11,7 @@ BASE_DIR=$(cd $(dirname $0)/..; pwd)
 . ${BASE_DIR}/bin/init-env
 
 cd ${CONFIG_DIR}
-git add --all
-git commit -m "${COMMIT_COMMENT}"
+if [ `git diff |wc -l` -gt 0 ]; then
+  git add --all
+  git commit -m "${COMMIT_COMMENT}"
+fi

@@ -1,0 +1,23 @@
+if [ -n "${http_proxy_host}" -a ! -f ${JENKINS_HOME}/proxy.xml ]; then
+    cat << EOF > ${JENKINS_HOME}/proxy.xml 2>&1
+<?xml version='1.0' encoding='UTF-8'?>
+<proxy>
+  <name>${http_proxy_host}</name>
+  <port>${http_proxy_port}</port>
+  <noProxyHost>127.0.0.1
+localhost
+server
+ldap
+jenkins
+sonar
+portal
+sonarqube
+db
+redisio
+postgresql
+ldapadmin</noProxyHost>
+  <userName>${http_proxy_user}</userName>
+  <secretPassword>${http_proxy_pass}</secretPassword>
+</proxy>
+EOF
+fi

@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-if [ ! -f ${JENKINS_HOME}/.initialized ]; then
-  . /config/init-jenkinshome
-  touch ${JENKINS_HOME}/.initialized
+if [ -f /config/init ]; then
+  . /config/init
 fi
 
 exec "$@"

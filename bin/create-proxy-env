@@ -9,6 +9,10 @@ parseurl() {
     url="$1"
     prefix="$2"
 
+    if [ -z "${url}" ]; then
+        return
+    fi
+
     proxy_proto="`echo ${url} | grep '://' | cut -d: -f1`"
     proxy_url="`echo ${url} | grep '://' | cut -d/ -f3`"
     proxy_userpass="`echo ${proxy_url} | grep @ | cut -d@ -f1`"
@@ -34,9 +38,17 @@ parseurl() {
     echo "${prefix}_proxy_pass=`decode ${proxy_pass}`"
     echo "${prefix}_proxy_host=${proxy_host}"
     echo "${prefix}_proxy_port=${proxy_port}"
-    echo "no_proxy=${no_proxy},127.0.0.1,localhost,server,ldap,jenkins,sonar,portal,sonarqube,db,redisio,postgresql,ldapadmin"
 }
 
-parseurl ${http_proxy} http >./proxy.env
-parseurl ${https_proxy} https >>./proxy.env
-parseurl ${http_proxy} ftp >>./proxy.env
+parseurl "${http_proxy}" http >./proxy.env
+parseurl "${https_proxy}" https >>./proxy.env
+parseurl "${ftp_proxy}" ftp >>./proxy.env
+
+if [ -n "${http_proxy}" ]; then
+    default_no_proxy=127.0.0.1,localhost,server,ldap,jenkins,sonar,portal,sonarqube,db,redisio,postgresql,ldapadmin
+    if [ -n "${no_proxy}" ]; then
+        echo "no_proxy=${no_proxy},${default_no_proxy}" >>./proxy.env
+    else
+        echo "no_proxy=${default_no_proxy}" >>./proxy.env
+    fi
+fi
