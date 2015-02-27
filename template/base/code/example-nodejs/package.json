@@ -7,11 +7,14 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "chai": "^1.10.0",
+    "chai": "^2.1.0",
     "grunt": "^0.4.5",
-    "grunt-env": "^0.4.2",
-    "grunt-mocha-test": "^0.12.7",
-    "mocha": "^2.1.0",
-    "xunit-file": "0.0.6"
+    "grunt-karma": "^0.10.1",
+    "karma": "^0.12.31",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-junit-reporter": "^0.2.2",
+    "karma-mocha": "^0.1.10",
+    "mocha": "^2.1.0"
   }
 }

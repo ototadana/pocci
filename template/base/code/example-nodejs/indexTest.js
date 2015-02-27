@@ -1,10 +1,9 @@
 'use strict';
 /*global describe, it*/
-var assert = require('chai').assert;
-var hello = require('./index.js');
+var assert = chai.assert;
 
 describe('index.js', function() {
   it('says hello to Shoichi', function() {
-    assert('hello, Shoichi', hello('Shoichi'));
+    assert.equal('hello, Shoichi', hello('Shoichi '));
   });
 });
