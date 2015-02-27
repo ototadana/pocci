@@ -43,8 +43,4 @@ for i in $(ls add\$*); do
     rm $i
 done
 
-if [ ! -d ${CONFIG_DIR}/.git ]; then
-    git init
-fi
-
 ${BASE_DIR}/bin/save-config "create from ${TEMPLATE_TYPE} template"
