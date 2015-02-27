@@ -1,11 +1,11 @@
+echo "{" >~/.bowerrc
 if [ -n "${http_proxy}" -a ! -f ~/.bowerrc ]; then
-    echo "{" >~/.bowerrc
     echo "\"strict-ssl\": false," >>~/.bowerrc
-    echo "\"proxy\": \"${http_proxy}\"" >>~/.bowerrc
+    echo "\"proxy\": \"${http_proxy}\"," >>~/.bowerrc
 
     if [ -n "${https_proxy}" ]; then
-      echo "\"https-proxy\": \"${https_proxy}\"" >>~/.bowerrc
+      echo "\"https-proxy\": \"${https_proxy}\"," >>~/.bowerrc
     fi
-
-    echo "}" >>~/.bowerrc
 fi
+echo "\"analytics\": false" >>~/.bowerrc
+echo "}" >>~/.bowerrc

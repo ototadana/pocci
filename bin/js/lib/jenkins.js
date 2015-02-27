@@ -76,7 +76,7 @@ var createNode = function*(jenkins, nodeName) {
 
   var options = {
     name: nodeName,
-    remoteFS: '/var/lib/jenkins',
+    remoteFS: '/var/jenkins_home',
     numExecutors: 1,
     exclusive: false
   };

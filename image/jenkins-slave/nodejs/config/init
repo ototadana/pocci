@@ -1,6 +1,6 @@
 source /config/base.proxy
 
-source /usr/local/nvm/nvm.sh
+source ~/.nvm/nvm.sh
 nvm use stable >/dev/null
 
 source /config/npm.proxy

@@ -1,5 +1,7 @@
 java:
   image: ototadana/jenkins-slave-java
+  volumes:
+    - /var/jenkins_home
   env_file:
     - ./java.env
     - ./.env
@@ -11,6 +13,8 @@ java:
 
 nodejs:
   image: ototadana/jenkins-slave-nodejs
+  volumes:
+    - /var/jenkins_home
   env_file:
     - ./nodejs.env
     - ./.env
