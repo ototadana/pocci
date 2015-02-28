@@ -5,7 +5,6 @@ git-server:latest
 redmine:latest
 scm-api:latest
 script-security:latest
-sonar:latest
 workflow-support:latest
 workflow-api:latest
 workflow-durable-task-step:latest

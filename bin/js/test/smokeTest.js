@@ -136,7 +136,7 @@ describe('Login', function() {
 
 describe('Jenkins Job', function() {
   it('build', function(done) {
-    this.timeout(10 * 60 * 1000);
+    this.timeout(20 * 60 * 1000);
 
     co(function*() {
       var jenkins = jenkinsLib('http://jenkinsci:password@server/jenkins');

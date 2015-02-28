@@ -3,7 +3,10 @@ package com.example;
 public class Greeting {
 
     public String hello(String name) {
-    	return "hello, " + name;
+        if(name == null) {
+            return "bye";
+        } else {
+        	return "hello, " + name;
+        }
     }
 }
-

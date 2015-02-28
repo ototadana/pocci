@@ -1,5 +1,5 @@
 node('java') {
   git url: 'http://server/git/example.example-java'
-  sh 'mvn -B clean install'
+  sh 'bash ./build.sh'
   step([$class: 'JUnitResultArchiver', testResults: 'target/surefire-reports/*.xml'])
 }

@@ -6,6 +6,8 @@ java:
     - ./java.env
     - ./.env
   external_links:
+    - poccis_sonarqube_1:sonar
+    - poccis_sonarqubedb_1:sonardb
     - poccis_portal_1:server
     - poccis_jenkins_1:jenkins
   environment:
@@ -19,6 +21,8 @@ nodejs:
     - ./nodejs.env
     - ./.env
   external_links:
+    - poccis_sonarqube_1:sonar
+    - poccis_sonarqubedb_1:sonardb
     - poccis_portal_1:server
     - poccis_jenkins_1:jenkins
   environment:
