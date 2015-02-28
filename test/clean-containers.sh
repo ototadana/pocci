@@ -23,5 +23,5 @@ assert poccis_
 assert poccir_
 
 if [ -d ${TEMP_DIR} ]; then
-    rm -r ${TEMP_DIR}
+    rm -fr ${TEMP_DIR}
 fi
