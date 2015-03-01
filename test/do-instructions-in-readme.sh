@@ -8,7 +8,7 @@ BASE_DIR=$(cd $(dirname $0); pwd)
 TEMP_DIR=${BASE_DIR}/temp
 
 if [ -d ${TEMP_DIR} ]; then
-    rm -r ${TEMP_DIR}
+    rm -fr ${TEMP_DIR}
 fi
 
 mkdir ${TEMP_DIR}
