@@ -173,7 +173,7 @@ describe('Jenkins Job', function() {
       yield build('example-java');
       yield build('example-nodejs');
 
-      yield retry(assertBuiltAll, {retries: 300});
+      yield retry(assertBuiltAll, {retries: 220, interval: 5000, factor : 1});
 
       yield assertBlue('example-java');
       yield assertBlue('example-nodejs');
