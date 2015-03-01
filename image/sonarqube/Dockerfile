@@ -7,6 +7,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN wget http://repository.codehaus.org/org/codehaus/sonar-plugins/sonar-ldap-plugin/1.4/sonar-ldap-plugin-1.4.jar -P /opt/sonar/extensions/plugins
+RUN wget http://repository.codehaus.org/org/codehaus/sonar-plugins/javascript/sonar-javascript-plugin/2.3/sonar-javascript-plugin-2.3.jar -P /opt/sonar/extensions/plugins
 
 COPY ./config/. /config/
 RUN chmod +x /config/*

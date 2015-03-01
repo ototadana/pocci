@@ -14,3 +14,12 @@ echo ldap.user.baseDn=${LDAP_BASE_DN} >>/opt/sonar/conf/sonar.properties
 echo ldap.user.request=\(${LDAP_UID=uid}={login}\) >>/opt/sonar/conf/sonar.properties
 echo ldap.user.realNameAttribute=${LDAP_REAL_NAME=cn} >>/opt/sonar/conf/sonar.properties
 echo ldap.user.emailAttribute=${LDAP_MAIL=mail} >>/opt/sonar/conf/sonar.properties
+
+if [ -n "${http_proxy_host}" ]; then
+    sed -i "s|#http.proxyHost=|http.proxyHost=${http_proxy_host}|g" /opt/sonar/conf/sonar.properties
+    sed -i "s|#http.proxyPort=|http.proxyPort=${http_proxy_port}|g" /opt/sonar/conf/sonar.properties
+    if [ -n "${http_proxy_user}" ]; then
+        sed -i "s|#http.proxyUser=|http.proxyUser=${http_proxy_user}|g" /opt/sonar/conf/sonar.properties
+        sed -i "s|#http.proxyPassword=|http.proxyPassword=${http_proxy_pass}|g" /opt/sonar/conf/sonar.properties
+    fi
+fi
