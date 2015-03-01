@@ -21,10 +21,6 @@ RUN jar tf /usr/share/jenkins/jenkins.war WEB-INF/plugins \
        | sed -e 's|\.hpi$|.hpi -P /config/plugins|' >/config/download-latest-plugins.sh \
     && bash /config/download-latest-plugins.sh
 
-# downgrade matrix-project (1.4 -> 1.4.1)
-RUN rm /config/plugins/matrix-project.hpi \
-    && wget http://updates.jenkins-ci.org/download/plugins/matrix-project/1.4/matrix-project.hpi -P /config/plugins
-
 RUN /usr/local/bin/plugins.sh /config/plugins.txt
 
 ENTRYPOINT ["/config/entrypoint"]
