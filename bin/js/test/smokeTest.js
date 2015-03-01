@@ -136,7 +136,7 @@ describe('Login', function() {
 
 describe('Jenkins Job', function() {
   it('build', function(done) {
-    this.timeout(20 * 60 * 1000);
+    this.timeout(30 * 60 * 1000);
 
     co(function*() {
       var jenkins = jenkinsLib('http://jenkinsci:password@server/jenkins');
@@ -157,26 +157,20 @@ describe('Jenkins Job', function() {
         }
       };
 
-      var assertBuiltAll = function*() {
-        yield assertBuilt('example-java');
-        yield assertBuilt('example-nodejs');
-      };
-
       var assertBlue = function*(name) {
         var data = yield get(name);
         assert.equal(data.color, 'blue');
       };
 
-      yield assertNotBuilt('example-java');
-      yield assertNotBuilt('example-nodejs');
+      var buildJob = function*(name) {
+        yield assertNotBuilt(name);
+        yield build(name);
+        yield retry(assertBuilt.bind(this, name), {retries: 200, interval: 5000, factor : 1});
+        yield assertBlue(name);
+      };
 
-      yield build('example-java');
-      yield build('example-nodejs');
-
-      yield retry(assertBuiltAll, {retries: 220, interval: 5000, factor : 1});
-
-      yield assertBlue('example-java');
-      yield assertBlue('example-nodejs');
+      yield buildJob('example-java');
+      yield buildJob('example-nodejs');
 
       done();
     }).catch(function(err) {
