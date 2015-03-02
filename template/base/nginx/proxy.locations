@@ -1,0 +1,15 @@
+location / {
+    proxy_pass http://portal/;
+}
+
+location /ldap/ {
+    proxy_pass http://ldapadmin/;
+}
+
+location /sonar/ {
+    proxy_pass http://sonarqube:9000;
+}
+
+location /jenkins/ {
+    proxy_pass http://jenkins:8080;
+}
