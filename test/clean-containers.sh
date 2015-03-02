@@ -15,13 +15,13 @@ BASE_DIR=$(cd $(dirname $0); pwd)
 TEMP_DIR=${BASE_DIR}/temp
 
 if [ -d ${TEMP_DIR} ]; then
-   cd ${TEMP_DIR}/pocci/bin
-   echo 'y' | ./destroy-service
+    cd ${TEMP_DIR}/pocci/bin
+    echo 'y' | ./destroy-service
+    rm -fr ${TEMP_DIR}
+else
+    `docker ps |grep "pocci[s|r]_" |awk 'BEGIN{printf "docker stop "}{printf $1" "}'`
+    `docker ps -a |grep "pocci[s|r]_" |awk 'BEGIN{printf "docker rm "}{printf $1" "}'`
 fi
 
 assert poccis_
 assert poccir_
-
-if [ -d ${TEMP_DIR} ]; then
-    rm -fr ${TEMP_DIR}
-fi

@@ -15,7 +15,7 @@ COMMIT_MESSAGE=$5
 rm -fr /tmp/${LOCAL_PATH}
 git clone ${REMOTE_PATH} /tmp/${LOCAL_PATH}
 
-cp -r ${LOCAL_PATH}/* /tmp/${LOCAL_PATH}
+cp -r ${LOCAL_PATH}/. /tmp/${LOCAL_PATH}
 cd /tmp/${LOCAL_PATH}
 git config user.name ${USER_NAME}
 git config user.email ${USER_EMAIL}
