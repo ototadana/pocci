@@ -8,11 +8,23 @@ module.exports = function(config) {
       }
     },
     browsers: ['Chrome_NS'],
-    reporters: ['progress', 'junit'],
+    reporters: ['progress', 'coverage', 'junit'],
+    preprocessors: {
+      'app/*.js': ['coverage']
+    },
     junitReporter: {
       outputFile: 'test-results/result.xml'
     },
+    coverageReporter: {
+      reporters : [
+        {type: 'lcov', subdir: '.'}
+      ],
+      dir : 'coverage'
+    },
     basePath: '.',
-    files: ['indexTest.js', 'index.js', 'bower_components/jquery/dist/jquery.js']
+    files: [
+      'test/*.js', 'app/*.js',
+      {pattern: 'bower_components/jquery/dist/jquery.js', watch: false}
+    ]
   });
 };
