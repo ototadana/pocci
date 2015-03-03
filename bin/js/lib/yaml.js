@@ -1,9 +1,8 @@
-/* jslint evil: true */
 'use strict';
 var fs = require('fs');
-var yaml = require('yaml');
+var yaml = require('js-yaml');
 
 module.exports = function(yamlFile) {
   var yamlText = fs.readFileSync(yamlFile, 'utf8');
-  return yaml.eval(yamlText);
+  return yaml.safeLoad(yamlText);
 };

@@ -1,0 +1,15 @@
+alminium:
+  users:
+    uid:          jenkinsci
+    userPassword: password
+  projects:
+    projectId: example01
+    issues:
+      - title only
+      -
+        subject:     example
+        priority_id: 4
+        description: |
+                      line 1
+                      line 2
+                      line 3

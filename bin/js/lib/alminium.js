@@ -1,3 +1,4 @@
+/*jshint sub:true*/
 'use strict';
 var server = require('co-request');
 var urlparse = require('url').parse;
@@ -175,7 +176,21 @@ var addProjectMember = function*(url, apiAccessKey, projectId, login) {
   throw new Error('cannot find user : ' + login);
 };
 
-var createIssue = function*(url, apiAccessKey, projectId, subject) {
+var createIssue = function*(url, apiAccessKey, projectId, issueOrSubject) {
+  var issue;
+
+  if(typeof issueOrSubject === 'object') {
+    issue = issueOrSubject;
+    issue['project_id'] = projectId;
+    issue['tracker_id'] = issue['tracker_id'] || 3;
+  } else {
+    issue = {
+      'project_id' : projectId,
+      'tracker_id' : 3,
+      'subject' : '' + issueOrSubject
+    };
+  }
+
   var response = yield server.post({
     url: url + '/issues.json',
     headers : {
@@ -183,13 +198,7 @@ var createIssue = function*(url, apiAccessKey, projectId, subject) {
       'Content-Type': 'application/json'
     },
     json : true,
-    body : {
-      issue : {
-        'project_id' : projectId,
-        'tracker_id' : 3,
-        'subject' : subject
-      }
-    }
+    body : { 'issue' : issue }
   });
 
   assertStatus(response, 'response.statusCode < 300');

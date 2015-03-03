@@ -137,9 +137,16 @@ var addDefaultMembers = function(users) {
   return members;
 };
 
-var createIssue = function*(request, projectId, issue) {
+var createIssue = function*(request, projectId, issueOrTitle) {
+  var issue;
+  if(typeof issueOrTitle === 'object') {
+    issue = issueOrTitle;
+  } else {
+    issue = {title : '' + issueOrTitle};
+  }
+
   var response = 
-    yield server.post(request('/projects/' + projectId + '/issues', {title : issue}));
+    yield server.post(request('/projects/' + projectId + '/issues', issue));
   assertStatus(response, 'response.statusCode === 201');
 };
 
@@ -230,5 +237,8 @@ module.exports = {
     if(options.groups) {
       yield setupGroups(browser, url, toArray(options.groups), users);
     }
-  }
+  },
+  loginByAdmin: loginByAdmin,
+  getApiAccessKey: getApiAccessKey,
+  createRequest: createRequest
 };
