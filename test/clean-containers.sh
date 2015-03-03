@@ -19,10 +19,10 @@ if [ -d ${TEMP_DIR} ]; then
     echo 'y' | ./destroy-service
     rm -fr ${TEMP_DIR}
 else
-    if [ `docker ps |grep $1 |wc -l` -gt 0 ]; then
+    if [ `docker ps |grep "pocci[s|r]_" |wc -l` -gt 0 ]; then
         `docker ps |grep "pocci[s|r]_" |awk 'BEGIN{printf "docker stop "}{printf $1" "}'`
     fi
-    if [ `docker ps -a |grep $1 |wc -l` -gt 0 ]; then
+    if [ `docker ps -a |grep "pocci[s|r]_" |wc -l` -gt 0 ]; then
         `docker ps -a |grep "pocci[s|r]_" |awk 'BEGIN{printf "docker rm "}{printf $1" "}'`
     fi
 fi
