@@ -1,7 +1,7 @@
 FROM ototadana/jenkins-slave-nodejs
 MAINTAINER ototadana@gmail.com
 
-RUN . ~/.nvm/nvm.sh \
+RUN source ~/.nvm/nvm.sh \
     && nvm install iojs \
     && npm install -g bower grunt-cli yo
 

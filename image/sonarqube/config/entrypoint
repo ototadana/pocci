@@ -2,7 +2,7 @@
 set -e
 
 if [ ! -f /opt/sonar/.initialized ]; then
-  . /config/init-sonar
+  source /config/init-sonar
   touch /opt/sonar/.initialized
 fi
 

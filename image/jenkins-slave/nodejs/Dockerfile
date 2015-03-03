@@ -4,7 +4,7 @@ MAINTAINER ototadana@gmail.com
 ENV NVM_VERSION v0.23.3
 RUN sudo wget -qO- https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash
 
-RUN . ~/.nvm/nvm.sh \
+RUN source ~/.nvm/nvm.sh \
     && nvm install stable \
     && npm install -g bower grunt-cli yo
 

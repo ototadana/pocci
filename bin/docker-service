@@ -2,7 +2,7 @@
 set -eu
 
 BASE_DIR=$(cd $(dirname $0)/..; pwd)
-. ${BASE_DIR}/bin/init-env
+source ${BASE_DIR}/bin/init-env
 
 cd ${CONFIG_DIR}
 docker-compose -p poccis "$@"
