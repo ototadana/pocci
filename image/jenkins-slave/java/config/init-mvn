@@ -1,0 +1,46 @@
+if [ ! -d ~/.m2 ]; then
+    mkdir ~/.m2
+fi
+
+if [ -f ~/.m2/settings.xml ]; then
+    return
+fi
+
+cat << EOF > ~/.m2/settings.xml 2>&1
+<settings>
+  <profiles>
+    <profile>
+      <id>pocci</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.jdbc.url>jdbc:postgresql://sonardb/\${env.SONARDB_ENV_DB_NAME}</sonar.jdbc.url>
+        <sonar.jdbc.username>\${env.SONARDB_ENV_DB_USER}</sonar.jdbc.username>
+        <sonar.jdbc.password>\${env.SONARDB_ENV_DB_PASS}</sonar.jdbc.password>
+        <sonar.host.url>http://sonar:9000/sonar</sonar.host.url>
+      </properties>
+    </profile>
+  </profiles>
+EOF
+
+if [ -n "${http_proxy_host}" ]; then
+    mvn_no_proxy=`echo ${no_proxy} |sed -e 's/,/\|/g'`
+    cat << EOF >> ~/.m2/settings.xml 2>&1
+  <proxies>
+    <proxy>
+      <id>default-proxy</id>
+      <active>true</active>
+      <protocol>http</protocol>
+      <host>${http_proxy_host}</host>
+      <port>${http_proxy_port}</port>
+      <username>${http_proxy_user}</username>
+      <password>${http_proxy_pass}</password>
+      <nonProxyHosts>${mvn_no_proxy}</nonProxyHosts>
+    </proxy>
+  </proxies>
+EOF
+fi
+
+echo "</settings>" >> ~/.m2/settings.xml

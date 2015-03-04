@@ -1,1 +1,1 @@
-source /config/jenkins.proxy
+source /config/init-jenkins

@@ -1,4 +1,9 @@
-if [ -n "${http_proxy_host}" -a ! -f ${JENKINS_HOME}/proxy.xml ]; then
+if [ -f ${JENKINS_HOME}/proxy.xml ]; then
+    return
+fi
+
+if [ -n "${http_proxy_host}" ]; then
+
     cat << EOF > ${JENKINS_HOME}/proxy.xml 2>&1
 <?xml version='1.0' encoding='UTF-8'?>
 <proxy>
@@ -20,4 +25,5 @@ ldapadmin</noProxyHost>
   <secretPassword>${http_proxy_pass}</secretPassword>
 </proxy>
 EOF
+
 fi

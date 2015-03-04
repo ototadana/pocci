@@ -1,2 +1,3 @@
-source /config/base.proxy
-source /config/java.proxy
+source /config/init-curl
+source /config/init-git
+source /config/init-mvn

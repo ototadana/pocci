@@ -1,3 +1,6 @@
+if [ -f /opt/sonar/.initialized ]; then
+    return
+fi
 
 sed -i 's|#wrapper.java.additional.6=-server|wrapper.java.additional.6=-server|g' /opt/sonar/conf/wrapper.conf
 sed -i "s|.*sonar.jdbc.username=.*|sonar.jdbc.username=${DB_ENV_DB_USER}|g" /opt/sonar/conf/sonar.properties
@@ -23,3 +26,5 @@ if [ -n "${http_proxy_host}" ]; then
         sed -i "s|#http.proxyPassword=|http.proxyPassword=${http_proxy_pass}|g" /opt/sonar/conf/sonar.properties
     fi
 fi
+
+touch /opt/sonar/.initialized

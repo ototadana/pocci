@@ -1,1 +1,2 @@
-source /config/base.proxy
+source /config/init-curl
+source /config/init-git

@@ -1,7 +1,8 @@
-source /config/base.proxy
+source /config/init-curl
+source /config/init-git
 
 source ~/.nvm/nvm.sh
 nvm use stable >/dev/null
 
-source /config/npm.proxy
-source /config/bower.proxy
+source /config/init-npm
+source /config/init-bower

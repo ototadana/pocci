@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-if [ -f /config/init ]; then
-  source /config/init
-fi
+source /config/init
 
 exec "$@"
