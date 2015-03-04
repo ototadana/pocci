@@ -51,13 +51,7 @@ Usage
     ./create-service
     ```
 
-6.  Apply user settings (`setup.yml`) by `apply-user-settings`.
-
-    ```bash
-    ./apply-user-settings
-    ```
-
-7.  Use the services.
+6.  Use the services.
 
     *   http://localhost/ ... GitLab / ALMinium (Redmine)
     *   http://localhost/jenkins ... Jenkins

@@ -9,23 +9,27 @@ JENKINS=http://server/jenkins
 SONAR=http://server/sonar
 LDAP=http://server/ldap
 
-#echo "STEP 0: Pull service images."
-#${BIN_DIR}/docker-service pull
-#${BIN_DIR}/docker-service -f jenkins-slaves.yml pull
-
-echo "STEP 0: Create '${CONFIG_DIR}/.env'"
+echo "STEP 1: Create '${CONFIG_DIR}/.env'"
 ${BIN_DIR}/yaml2env
 ${BIN_DIR}/save-config "create .env file from setup.yml"
 
-echo "STEP 1: Create & start services."
+echo "STEP 2: Create & start services."
 ${BIN_DIR}/docker-service up -d
 ${BIN_DIR}/waitfor ${JENKINS}
 
-echo "STEP 2: Update Jenkins plugins."
+echo "STEP 3: Update Jenkins plugins."
 docker exec -it poccis_jenkins_1 /config/update-plugins.sh
 
-echo "STEP 3: Restart Jenkins."
+echo "STEP 4: Restart Jenkins."
 ${BIN_DIR}/oneoff iojs curl --noproxy server -X POST ${JENKINS}/restart
 ${BIN_DIR}/waitfor ${PORTAL} ${JENKINS} ${SONAR} ${LDAP}
+
+echo "STEP 5: Apply user settings."
+${BIN_DIR}/setup
+
+echo "STEP 6: Start Jenkins slaves."
+cp ${TEMP_CONFIG_DIR}/*.env ${CONFIG_DIR}
+${BIN_DIR}/docker-service -f jenkins-slaves.yml up -d
+${BIN_DIR}/save-config "create *.env file of jenkins slaves"
 
 echo "Done."

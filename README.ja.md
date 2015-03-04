@@ -51,13 +51,7 @@ Docker コンテナを使った CIサービス構築の試作。
     ./create-service
     ```
 
-6.  `apply-user-settings` を実行してユーザー設定 (`setup.yml`) を適用する。
-
-    ```bash
-    ./apply-user-settings
-    ```
-
-7.  以下の URL にアクセスしてサービスを利用する。
+6.  以下の URL にアクセスしてサービスを利用する。
 
     *   http://localhost/ ... GitLab / ALMinium (Redmine)
     *   http://localhost/jenkins ... Jenkins

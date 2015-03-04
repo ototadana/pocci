@@ -20,4 +20,3 @@ cd bin
 bash ./build
 echo ${TEMPLATE_NO} | ./generate-config-from-template
 ./create-service
-./apply-user-settings
