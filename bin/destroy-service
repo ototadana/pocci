@@ -7,4 +7,4 @@ source ${BASE_DIR}/bin/init-env
 ${BIN_DIR}/stop-service
 
 ${BIN_DIR}/docker-service rm -v
-${BIN_DIR}/docker-service -f jenkins-slaves.yml rm -v --force
+${BIN_DIR}/jenkins-slave rm -v --force

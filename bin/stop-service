@@ -5,7 +5,4 @@ BASE_DIR=$(cd $(dirname $0)/..; pwd)
 source ${BASE_DIR}/bin/init-env
 
 ${BIN_DIR}/docker-service stop
-
-set +e
-${BIN_DIR}/docker-service -f jenkins-slaves.yml stop
-exit 0
+${BIN_DIR}/jenkins-slave stop

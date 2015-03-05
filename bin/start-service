@@ -9,4 +9,4 @@ JENKINS=http://server/jenkins
 ${BIN_DIR}/docker-service start
 ${BIN_DIR}/waitfor ${JENKINS}
 
-${BIN_DIR}/docker-service -f jenkins-slaves.yml start
+${BIN_DIR}/jenkins-slave start
