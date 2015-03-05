@@ -14,8 +14,8 @@ git:
     -
       remotePath:     /git/example.example-java
       localPath:      ./config/code/example-java
-      commitMessage:  refs #1 import example codes
+      commitMessage:  "refs #1 import example codes"
     -
       remotePath:     /git/example.example-nodejs
       localPath:      ./config/code/example-nodejs
-      commitMessage:  refs #1 import example codes
+      commitMessage:  "refs #1 import example codes"
