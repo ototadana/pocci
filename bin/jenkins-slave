@@ -4,9 +4,7 @@ set -eu
 BASE_DIR=$(cd $(dirname $0)/..; pwd)
 source ${BASE_DIR}/bin/init-env
 
-cd ${CONFIG_DIR}
-
-SERVICES=`ls -m *.env 2>/dev/null |sed -e 's/,//g' |sed -e 's/\.env//g'`
-if [ -n "${SERVICES}" ]; then
-    ${BIN_DIR}/docker-service -f jenkins-slaves.yml "$@" ${SERVICES}
+if [ -f ${CONFIG_DIR}/jenkins-slaves.yml ]; then
+    cd ${CONFIG_DIR}
+    ${BIN_DIR}/docker-service -f jenkins-slaves.yml "$@"
 fi

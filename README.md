@@ -41,7 +41,6 @@ Usage
       - code/               ... Example codes
       - nginx/              ... Nginx reverse proxy configuration
       - docker-compose.yml  ... Service composition (Docker Compose file)
-      - jenkins-slaves.yml  ... Jenkins slave nodes (Docker Compose file)
       - setup.yml           ... User settings
     ```
 

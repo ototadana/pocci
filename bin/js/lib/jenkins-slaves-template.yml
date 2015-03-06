@@ -1,0 +1,15 @@
+__NAME:
+  image: ototadana/jenkins-slave-__NAME
+  volumes:
+    - /var/jenkins_home
+  env_file:
+    - ./.env
+  external_links:
+    - poccis_sonarqube_1:sonar
+    - poccis_sonarqubedb_1:sonardb
+    - poccis_portal_1:server
+    - poccis_jenkins_1:jenkins
+  environment:
+    - JENKINS_URL=http://jenkins:8080/jenkins
+    - JENKINS_SLAVE_SECRET=__SECRET
+

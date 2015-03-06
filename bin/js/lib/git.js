@@ -1,22 +1,11 @@
 'use strict';
 var spawn = require('co-child-process');
 var path = require('path');
-var urlparse = require('url').parse;
-var urlformat = require('url').format;
 var util = require('./util.js');
-
-var toRemoteURL = function(url, user, remotePath) {
-  var p = urlparse(url);
-  if(!p.auth && user.userPassword) {
-    p.auth = user.uid + ':' + user.userPassword;
-  }
-  p.pathname = remotePath;
-  return urlformat(p);
-};
 
 var importCode = function*(url, options, ldapUsers) {
   var user = util.getUser(options.user, ldapUsers);
-  var remoteUrl = toRemoteURL(url, user, options.remotePath);
+  var remoteUrl = util.getURL(url, user, options.remotePath);
   var shellScript = path.resolve(__dirname, 'git-import.sh');
   var args = [
     shellScript,

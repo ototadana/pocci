@@ -28,8 +28,10 @@ echo "STEP 5: Apply user settings."
 ${BIN_DIR}/setup
 
 echo "STEP 6: Start Jenkins slaves."
-cp ${TEMP_CONFIG_DIR}/*.env ${CONFIG_DIR}
-${BIN_DIR}/jenkins-slave up -d
-${BIN_DIR}/save-config "create *.env file of jenkins slaves"
+if [ -f ${TEMP_CONFIG_DIR}/jenkins-slaves.yml ]; then
+    cp ${TEMP_CONFIG_DIR}/jenkins-slaves.yml ${CONFIG_DIR}
+    ${BIN_DIR}/jenkins-slave up -d
+    ${BIN_DIR}/save-config "add jenkins-slaves.yml"
+fi
 
 echo "Done."

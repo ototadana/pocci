@@ -1,0 +1,11 @@
+ldap:
+  readOnly: true
+  users:
+    -
+      uid:          jenkinsci
+      userPassword: password
+
+jenkins:
+  nodes:
+    - java
+    - nodejs

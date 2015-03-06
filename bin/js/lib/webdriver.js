@@ -19,6 +19,7 @@ module.exports.init = function*() {
     getHTML: thunkify(browser.getHTML.bind(browser)),
     getText: thunkify(browser.getText.bind(browser)),
     getValue: thunkify(browser.getValue.bind(browser)),
+    isExisting: thunkify(browser.isExisting.bind(browser)),
     isSelected: thunkify(browser.isSelected.bind(browser))
   };
   browser.windowHandleMaximize();

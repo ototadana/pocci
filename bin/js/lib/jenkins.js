@@ -5,9 +5,6 @@ var jenkinsLib = require('jenkins');
 var path = require('path');
 var ldapDefaults = require('./ldap.js').defaults;
 var util = require('./util.js');
-var urlparse = require('url').parse;
-var urlformat = require('url').format;
-
 
 var createJob = function*(jenkins, job) {
   var destroy = thunkify(jenkins.job.destroy.bind(jenkins.job));
@@ -29,9 +26,7 @@ var createJob = function*(jenkins, job) {
 
 var createJobs = function*(jenkins, jobs, gitOptions, scmUrl) {
   var toUrl = function(path) {
-    var p = urlparse(scmUrl);
-    p.pathname = path;
-    return urlformat(p);
+    return util.getURL(scmUrl, null, path);
   };
 
   var toJobs = function(repositories) {
@@ -60,11 +55,14 @@ var createJobs = function*(jenkins, jobs, gitOptions, scmUrl) {
   }
 };
 
-var writeNodeEnv = function(node, text) {
-  fs.writeFileSync('./config/' + node + '.env', text + '\n');
+var writeNodeConf = function(node, secret) {
+  var templateFilePath = path.resolve(__dirname, 'jenkins-slaves-template.yml');
+  var text = fs.readFileSync(templateFilePath, 'utf8')
+              .replace(/__NAME/g, node).replace(/__SECRET/g, secret);
+  fs.appendFileSync('./config/jenkins-slaves.yml', text);
 };
 
-var createNode = function*(jenkins, nodeName) {
+var createNode = function*(jenkins, nodeName, ldapOptions) {
   var destroy = thunkify(jenkins.node.destroy.bind(jenkins.node));
   var create = thunkify(jenkins.node.create.bind(jenkins.node));
 
@@ -82,37 +80,48 @@ var createNode = function*(jenkins, nodeName) {
   };
 
   yield create(options);
-  writeNodeEnv(nodeName, '');
+  if(!ldapOptions) {
+    writeNodeConf(nodeName, '');
+  }
 };
 
-var createNodes = function*(jenkins, nodes) {
+var createNodes = function*(jenkins, nodes, ldapOptions) {
   nodes = util.toArray(nodes);
   for(var i = 0; i < nodes.length; i++) {
-    yield createNode(jenkins, nodes[i]);
+    yield createNode(jenkins, nodes[i], ldapOptions);
   }
 };
 
 var enableLdap = function*(browser, url, ldapOptions, ldapUrl, user) {
+  var enableSecurity = function*() {
+    var isSelected = (yield browser.yieldable.isSelected(useSecuritySelector))[0];
+    if (!isSelected) {
+      yield browser.yieldable.click('input[type="checkbox"][name="_.useSecurity"]');
+    }
+
+    yield browser.yieldable.click('#radio-block-2');
+    yield browser.yieldable.click('#yui-gen1-button');
+
+    var uid = ldapOptions.attrLogin || ldapDefaults.attrLogin;
+    browser
+      .setValue('input[type="text"][name="_.server"]', ldapUrl)
+      .setValue('input[type="text"][name="_.rootDN"]', ldapOptions.baseDn || ldapDefaults.baseDn)
+      .setValue('input[type="text"][name="_.userSearch"]', uid + '={0}')
+      .setValue('input[type="text"][name="_.managerDN"]', ldapOptions.bindDn || ldapDefaults.bindDn)
+      .setValue('input[type="password"][name="_.managerPasswordSecret"]', ldapOptions.bindPassword || ldapDefaults.bindPassword)
+      .setValue('input[type="text"][name="_.displayNameAttributeName"]', ldapOptions.attrLogin || ldapDefaults.attrLogin);
+
+    yield browser.yieldable.call();
+    yield browser.yieldable.click('#yui-gen6-button');
+  };
+
   browser.url(url + '/configureSecurity/');
-  var isSelected = (yield browser.yieldable.isSelected('input[type="checkbox"][name="_.useSecurity"]'))[0];
-  if (!isSelected) {
-    yield browser.yieldable.click('input[type="checkbox"][name="_.useSecurity"]');
+  var useSecuritySelector = 'input[type="checkbox"][name="_.useSecurity"]';
+  var isDisabledSecurity = (yield browser.yieldable.isExisting(useSecuritySelector))[0];
+
+  if(isDisabledSecurity) {
+    yield enableSecurity();
   }
-
-  yield browser.yieldable.click('#radio-block-2');
-  yield browser.yieldable.click('#yui-gen1-button');
-
-  var uid = ldapOptions.attrLogin || ldapDefaults.attrLogin;
-  browser
-    .setValue('input[type="text"][name="_.server"]', ldapUrl)
-    .setValue('input[type="text"][name="_.rootDN"]', ldapOptions.baseDn || ldapDefaults.baseDn)
-    .setValue('input[type="text"][name="_.userSearch"]', uid + '={0}')
-    .setValue('input[type="text"][name="_.managerDN"]', ldapOptions.bindDn || ldapDefaults.bindDn)
-    .setValue('input[type="password"][name="_.managerPasswordSecret"]', ldapOptions.bindPassword || ldapDefaults.bindPassword)
-    .setValue('input[type="text"][name="_.displayNameAttributeName"]', ldapOptions.attrLogin || ldapDefaults.attrLogin);
-
-  yield browser.yieldable.call();
-  yield browser.yieldable.click('#yui-gen6-button');
 
   var loginUser = util.getUser(user, ldapOptions.users);
   browser
@@ -122,17 +131,20 @@ var enableLdap = function*(browser, url, ldapOptions, ldapUrl, user) {
   yield browser.yieldable.call();
   yield browser.yieldable.click('button');
 
-  browser.url(url + '/configureSecurity/');
-  yield browser.yieldable.click('#radio-block-8');
-  yield browser.yieldable.click('input[type="checkbox"][name="_.masterToSlaveAccessControl"]');
-  yield browser.yieldable.click('#yui-gen6-button');
+  if(isDisabledSecurity) {
+    browser.url(url + '/configureSecurity/');
+    yield browser.yieldable.click('#radio-block-8');
+    yield browser.yieldable.click('#yui-gen6-button');
+  }
+
+  return loginUser;
 };
 
 var saveSecret = function*(browser, url, node) {
   browser.url(url + '/computer/' + node);
   var text = (yield browser.yieldable.getText('pre'))[0];
-  var secret = text.replace(/.*-secret/,'JENKINS_SLAVE_SECRET=-secret');
-  writeNodeEnv(node, secret);
+  var secret = text.replace(/.*-secret/,'-secret');
+  writeNodeConf(node, secret);
 };
 
 var saveSecrets = function*(browser, url, nodes) {
@@ -149,24 +161,23 @@ module.exports = {
   },
   setup: function*(browser, options, ldapOptions, gitOptions) {
     var url = options.url || this.defaults.url;
-    var jenkins = jenkinsLib(url);
+    var apiUrl = url;
+    if(ldapOptions) {
+      var ldapUrl = options.ldapUrl || ldapOptions.url || ldapDefaults.url;
+      var loginUser = yield enableLdap(browser, url, ldapOptions, ldapUrl, options.user);
+      apiUrl = util.getURL(url, loginUser);
+    }
+
+    var jenkins = jenkinsLib(apiUrl);
 
     if(options.nodes) {
-      yield createNodes(jenkins, options.nodes);
+      yield createNodes(jenkins, options.nodes, ldapOptions);
+      yield saveSecrets(browser, url, options.nodes);
     }
 
     if(options.jobs) {
       var scmUrl = options.scmUrl || this.defaults.scmUrl;
       yield createJobs(jenkins, options.jobs, gitOptions, scmUrl);
-    }
-
-    if(ldapOptions) {
-      var ldapUrl = options.ldapUrl || ldapOptions.url || ldapDefaults.url;
-      yield enableLdap(browser, url, ldapOptions, ldapUrl, options.user);
-
-      if(options.nodes) {
-        yield saveSecrets(browser, url, options.nodes);
-      }
     }
   }
 };

@@ -1,6 +1,9 @@
 /*jslint evil: true */
 'use strict';
 var assert = require('assert');
+var urlparse = require('url').parse;
+var urlformat = require('url').format;
+var escape = require('querystring').escape;
 
 module.exports = {
   toArray: function(obj){
@@ -40,6 +43,16 @@ module.exports = {
     }
 
     return ldapUsers[0];
+  },
+  getURL: function(url, user, path) {
+      var p = urlparse(url);
+      if(!p.auth && user && user.userPassword) {
+        p.auth = escape(user.uid) + ':' + escape(user.userPassword);
+      }
+      if(path) {
+        p.pathname = path;
+      }
+      return urlformat(p);
   },
   assertStatus: function(response, condition) {
     if(eval(condition)) {
