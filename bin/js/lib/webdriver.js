@@ -23,5 +23,6 @@ module.exports.init = function*() {
     isSelected: thunkify(browser.isSelected.bind(browser))
   };
   browser.windowHandleMaximize();
+  yield browser.yieldable.call();
   module.exports.browser = browser;
 };

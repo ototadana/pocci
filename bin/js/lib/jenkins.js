@@ -134,10 +134,9 @@ var enableLdap = function*(browser, url, ldapOptions, ldapUrl, user) {
   if(isDisabledSecurity) {
     browser.url(url + '/configureSecurity/');
     yield browser.yieldable.click('#radio-block-8');
+    yield browser.yieldable.click('input[type="checkbox"][name="_.masterToSlaveAccessControl"]');
     yield browser.yieldable.click('#yui-gen6-button');
   }
-
-  return loginUser;
 };
 
 var saveSecret = function*(browser, url, node) {
@@ -161,17 +160,26 @@ module.exports = {
   },
   setup: function*(browser, options, ldapOptions, gitOptions) {
     var url = options.url || this.defaults.url;
-    var apiUrl = url;
-    if(ldapOptions) {
-      var ldapUrl = options.ldapUrl || ldapOptions.url || ldapDefaults.url;
-      var loginUser = yield enableLdap(browser, url, ldapOptions, ldapUrl, options.user);
-      apiUrl = util.getURL(url, loginUser);
-    }
+    var getJenkins = function() {
+      if(ldapOptions) {
+        var loginUser = util.getUser(options.user, ldapOptions.users);
+        return jenkinsLib(util.getURL(url, loginUser));
+      } else {
+        return jenkinsLib(url);
+      }
+    };
 
-    var jenkins = jenkinsLib(apiUrl);
-
+    var jenkins = getJenkins();
     if(options.nodes) {
       yield createNodes(jenkins, options.nodes, ldapOptions);
+    }
+
+    if(ldapOptions) {
+      var ldapUrl = options.ldapUrl || ldapOptions.url || ldapDefaults.url;
+      yield enableLdap(browser, url, ldapOptions, ldapUrl, options.user);
+    }
+
+    if(options.nodes) {
       yield saveSecrets(browser, url, options.nodes);
     }
 

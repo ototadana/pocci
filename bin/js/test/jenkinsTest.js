@@ -60,8 +60,6 @@ describe('Jenkins', function() {
 
   before(function(done) {
     co(function*() {
-      yield destroyNodes();
-
       yield webdriver.init();
       browser = webdriver.browser;
       done();
@@ -75,7 +73,13 @@ describe('Jenkins', function() {
       fs.unlinkSync('./config/jenkins-slaves.yml');
     } catch(err) {
     }
-    done();
+
+    co(function*() {
+      yield destroyNodes();
+      done();
+    }).catch(function(err) {
+      done(err);
+    });
   });
 
   after(function(done) {
