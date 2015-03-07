@@ -165,7 +165,9 @@ describe('Jenkins Job', function() {
       var buildJob = function*(name) {
         yield assertNotBuilt(name);
         yield build(name);
+        console.log('    start : ' + name);
         yield retry(assertBuilt.bind(this, name), {retries: 200, interval: 5000, factor : 1});
+        console.log('    end   : ' + name);
         yield assertBlue(name);
       };
 
