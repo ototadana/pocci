@@ -1,7 +1,7 @@
 FROM ototadana/jenkins-slave-base
 MAINTAINER ototadana@gmail.com
 
-ENV NVM_VERSION v0.23.3
+ENV NVM_VERSION v0.24.0
 RUN sudo wget -qO- https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash
 
 RUN source ~/.nvm/nvm.sh \
