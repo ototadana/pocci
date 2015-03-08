@@ -17,6 +17,16 @@ module.exports = {
     
     return [];
   },
+  copy: function(src, dst) {
+    var obj = {};
+    for(var dstKey in dst) {
+      obj[dstKey] = dst[dstKey];
+    }
+    for(var srcKey in src) {
+      obj[srcKey] = src[srcKey];
+    }
+    return obj;
+  },
   getUser: function(user, ldapUsers) {
     var defaultUser = {
       uid: 'anonymous',
@@ -45,14 +55,19 @@ module.exports = {
     return ldapUsers[0];
   },
   getURL: function(url, user, path) {
-      var p = urlparse(url);
-      if(!p.auth && user && user.userPassword) {
-        p.auth = escape(user.uid) + ':' + escape(user.userPassword);
-      }
-      if(path) {
-        p.pathname = path;
-      }
-      return urlformat(p);
+    var p = urlparse(url);
+    if(!p.auth && user && user.userPassword) {
+      p.auth = escape(user.uid) + ':' + escape(user.userPassword);
+    }
+    if(path) {
+      p.pathname = path;
+    }
+    return urlformat(p);
+  },
+  sortById: function(array) {
+    array.sort(function(a, b) {
+      return a.id - b.id;
+    });
   },
   assertStatus: function(response, condition) {
     if(eval(condition)) {

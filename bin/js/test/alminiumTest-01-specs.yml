@@ -1,0 +1,13 @@
+issues:
+  path: "/issues.json?project_id=example01"
+  values:
+    - ["issues.length", 1]
+    - ["issues[0].priority.id", 2]
+    - ["issues[0].subject", "issue01"]
+    - ["issues[0].description", undefined]
+
+memberships:
+  path: "/projects/example01/memberships.json"
+  values:
+    - ["memberships.length", 1]
+    - ["memberships[0].user.name", "CI Jenkins"]

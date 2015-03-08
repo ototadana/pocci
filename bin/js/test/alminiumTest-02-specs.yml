@@ -1,0 +1,31 @@
+example01Project:
+  path: "/projects/example01.json"
+
+example01Issues:
+  path: "/issues.json?project_id=example01"
+  values:
+    - ["issues.length", 2]
+    - ["issues[0].priority.id", 4]
+    - ["issues[0].subject", "issue01"]
+    - ["issues[0].description", "line 1\r\nline 2\r\nline 3\r\n"]
+    - ["issues[1].priority.id", 2]
+    - ["issues[1].subject", "issue02"]
+    - ["issues[1].description", undefined]
+
+example01Memberships:
+  path: "/projects/example01/memberships.json"
+  values:
+    - ["memberships.length", 2]
+    - ["memberships[0].user.name", "CI Jenkins"]
+    - ["memberships[1].user.name", "BOUZE Taro"]
+
+example02Issues:
+  path: "/issues.json?project_id=example02"
+  values:
+    - ["issues.length", 0]
+
+example02Memberships:
+  path: "/projects/example02/memberships.json"
+  values:
+    - ["memberships.length", 1]
+    - ["memberships[0].user.name", "BOUZE Taro"]

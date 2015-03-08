@@ -5,6 +5,7 @@ var urlparse = require('url').parse;
 var ldapDefaults = require('./ldap.js').defaults;
 var toArray = require('./util.js').toArray;
 var assertStatus = require('./util.js').assertStatus;
+var copy = require('./util.js').copy;
 
 var logout = function*(browser) {
   browser.click('a.logout');
@@ -70,22 +71,34 @@ var enableLdap = function*(browser, url, ldapOptions, ldapUrl) {
   }
 };
 
-var getApiAccessKey = function*(browser, url) {
+var createRequest = function*(browser, url) {
   browser.url(url + '/my/account');
-  return yield browser.yieldable.getHTML('#api-access-key', false);
+  var key = (yield browser.yieldable.getHTML('#api-access-key', false))[0];
+
+  return function(path, body) {
+    var request = {
+      url: url + path,
+      json: true,
+      headers: {
+        'X-Redmine-API-Key': key,
+        'Content-Type': 'application/json'
+      }
+    };
+    if(body) {
+      request.body = body;
+    }
+    return request;
+  };
 };
 
-var deleteProject = function*(url, apiAccessKey, projectId) {
-  var request = {
-    method: 'DELETE',
-    url: url + '/projects/' + projectId + '.json',
-    headers: {
-      'X-Redmine-API-Key': apiAccessKey
-    }
-  };
-  var response = yield server(request);
+var getProject = function*(url, request, projectId) {
+  var response = yield server.get(request('/projects/' + projectId + '.json'));
+  if(response.statusCode === 404) {
+    return null;
+  }
+  assertStatus(response, 'response.statusCode < 300');
 
-  assertStatus(response, 'response.statusCode < 300 || response.statusCode === 404');
+  return response.body;
 };
 
 var createProject = function(browser, url, projectId) {
@@ -108,67 +121,48 @@ var createRepository = function(browser, url, projectId, repositoryId) {
     .click('#repository-form > div.box.tabular > p:nth-child(4) > input[type="submit"]:nth-child(3)');
 };
 
-var getUsers = function*(url, apiAccessKey) {
-  var response = yield server.get({
-    url: url + '/users.json',
-    headers: {
-      'X-Redmine-API-Key': apiAccessKey
-    }
-  });
-
+var getUsers = function*(url, request) {
+  var response = yield server.get(request('/users.json'));
   assertStatus(response, 'response.statusCode < 300');
 
-  return JSON.parse(response.body).users;
+  return response.body.users;
 };
 
-var deleteUser = function*(url, apiAccessKey, id) {
-  var response = yield server.del({
-    url: url + '/users/' + id + '.json',
-    headers: {
-      'X-Redmine-API-Key': apiAccessKey
-    }
-  });
-
+var getProjectMembers = function*(url, request, projectId) {
+  var response = yield server.get(request('/projects/' + projectId + '/memberships.json'));
   assertStatus(response, 'response.statusCode < 300');
-};
 
-var deleteUsers = function*(url, apiAccessKey) {
-  var users = yield getUsers(url, apiAccessKey);
-  for(var i = 0; i < users.length; i++) {
-    var user = users[i];
-    if(user.login !== 'admin') {
-      yield deleteUser(url, apiAccessKey, user.id);
-      return;
-    }
+  var memberships = response.body.memberships;
+  var members = {};
+  for(var i = 0; i < memberships.length; i++) {
+    var id = memberships[i].user.id;
+    members[id] = id;
   }
+  return members;
 };
 
-var addProjectMember = function*(url, apiAccessKey, projectId, login) {
+var addProjectMember = function*(url, request, projectId, login, projectMembers) {
 
   var addProject = function*(id) {
-    var response = yield server.post({
-      url: url + '/projects/' + projectId + '/memberships.json',
-      headers : {
-        'X-Redmine-API-Key': apiAccessKey,
-        'Content-Type': 'application/json'
-      },
-      json : true,
-      body : {
+    var response = yield server.post(
+      request(
+        '/projects/' + projectId + '/memberships.json', {
         membership : {
           'user_id' : id,
           'role_ids' : [3, 4]
         }
       }
-    });
-
+    ));
     assertStatus(response, 'response.statusCode < 300');
   };
 
-  var users = yield getUsers(url, apiAccessKey);
+  var users = yield getUsers(url, request);
   for(var i = 0; i < users.length; i++) {
     var user = users[i];
     if(user.login === login) {
-      yield addProject(user.id);
+      if(!projectMembers[user.id]) {
+        yield addProject(user.id);
+      }
       return;
     }
   }
@@ -176,7 +170,17 @@ var addProjectMember = function*(url, apiAccessKey, projectId, login) {
   throw new Error('cannot find user : ' + login);
 };
 
-var createIssue = function*(url, apiAccessKey, projectId, issueOrSubject) {
+var postIssue = function*(url, request, issue) {
+  var response = yield server.post(request('/issues.json', {'issue' : issue}));
+  assertStatus(response, 'response.statusCode < 300');
+};
+
+var putIssue = function*(url, request, issue) {
+  var response = yield server.put(request('/issues/' + issue.id + '.json', {'issue' : issue}));
+  assertStatus(response, 'response.statusCode < 300');
+};
+
+var createIssue = function*(url, request, projectId, issueOrSubject, projectIssues) {
   var issue;
 
   if(typeof issueOrSubject === 'object') {
@@ -191,17 +195,16 @@ var createIssue = function*(url, apiAccessKey, projectId, issueOrSubject) {
     };
   }
 
-  var response = yield server.post({
-    url: url + '/issues.json',
-    headers : {
-      'X-Redmine-API-Key': apiAccessKey,
-      'Content-Type': 'application/json'
-    },
-    json : true,
-    body : { 'issue' : issue }
-  });
+  var projectIssue = projectIssues[issue.subject];
+  if(projectIssue) {
+    issue = copy(issue, projectIssue);
+  }
 
-  assertStatus(response, 'response.statusCode < 300');
+  if(projectIssue) {
+    yield putIssue(url, request, issue);
+  } else {
+    yield postIssue(url, request, issue);
+  }
 };
 
 var createRepositories = function(browser, url, projectId, repositories) {
@@ -210,15 +213,29 @@ var createRepositories = function(browser, url, projectId, repositories) {
   }
 };
 
-var addProjectMembers = function*(url, key, projectId, members) {
+var addProjectMembers = function*(url, request, projectId, members) {
+  var projectMembers = yield getProjectMembers(url, request, projectId);
   for(var i = 0; i < members.length; i++) {
-    yield addProjectMember(url, key, projectId, members[i]);
+    yield addProjectMember(url, request, projectId, members[i], projectMembers);
   }
 };
 
-var createIssues = function*(url, key, projectId, issues) {
+var getProjectIssues = function*(url, request, projectId) {
+  var response = yield server.get(request('/issues.json?project_id=' + projectId));
+  assertStatus(response, 'response.statusCode < 300');
+
+  var projectIssues = {};
+  var issues = response.body.issues;
   for(var i = 0; i < issues.length; i++) {
-    yield createIssue(url, key, projectId, issues[i]);
+    projectIssues[issues[i].subject] = issues[i];
+  }
+  return projectIssues;
+};
+
+var createIssues = function*(url, request, projectId, issues) {
+  var projectIssues = yield getProjectIssues(url, request, projectId);
+  for(var i = 0; i < issues.length; i++) {
+    yield createIssue(url, request, projectId, issues[i], projectIssues);
   }
 };
 
@@ -230,30 +247,32 @@ var addDefaultMembers = function(users) {
   return members;
 };
 
-var setupProject = function*(browser, url, key, options, users) {
+var setupProject = function*(browser, url, request, options, users) {
 
-  yield deleteProject(url, key, options.projectId);
-  createProject(browser, url, options.projectId);
+  var project = yield getProject(url, request, options.projectId);
+  if(!project) {
+    createProject(browser, url, options.projectId);
+  }
 
   if(options.repositories) {
-    createRepositories(browser, url, options.projectId, options.repositories);
+    createRepositories(browser, url, options.projectId, toArray(options.repositories));
   }
 
   yield browser.yieldable.call();
 
   var members = options.members || addDefaultMembers(users);
   if(members) {
-    yield addProjectMembers(url, key, options.projectId, members);
+    yield addProjectMembers(url, request, options.projectId, members);
   }
 
   if(options.issues) {
-    yield createIssues(url, key, options.projectId, options.issues);
+    yield createIssues(url, request, options.projectId, toArray(options.issues));
   }
 };
 
-var setupProjects = function*(browser, url, key, projects, users) {
+var setupProjects = function*(browser, url, request, projects, users) {
   for(var i = 0; i < projects.length; i++) {
-    yield setupProject(browser, url, key, projects[i], users);
+    yield setupProject(browser, url, request, projects[i], users);
   }
 };
 
@@ -274,8 +293,6 @@ module.exports = {
 
     yield loginByAdmin(browser, url);
     yield enableWebService(browser, url);
-    var key = (yield getApiAccessKey(browser, url))[0];
-    yield deleteUsers(url, key);
 
     if(ldapOptions) {
       var ldapUrl = options.ldapUrl || ldapOptions.url || ldapDefaults.url;
@@ -289,7 +306,11 @@ module.exports = {
     if(options.projects) {
       yield logout(browser);
       yield loginByAdmin(browser, url);
-      yield setupProjects(browser, url, key, toArray(options.projects), users);
+      this.request = yield createRequest(browser, url);
+      yield setupProjects(browser, url, this.request, toArray(options.projects), users);
     }
-  }
+  },
+  loginByAdmin: loginByAdmin,
+  logout: logout,
+  createRequest: createRequest
 };

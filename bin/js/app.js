@@ -1,6 +1,6 @@
 'use strict';
 var co = require('co');
-var setup = require('./lib/setup.js');
+var setup = require('./lib/setup.js').setup;
 
 co(function*() {
   yield setup('./config/setup.yml');

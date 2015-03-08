@@ -1,0 +1,27 @@
+alminium:
+  users:
+    -
+      uid:          jenkinsci
+      userPassword: password
+    -
+      uid:          bouze
+      userPassword: password
+  projects:
+    -
+      projectId: example01
+      issues:
+        - issue02
+        - 
+          subject:     issue01
+          priority_id: 4
+          description: |
+                        line 1
+                        line 2
+                        line 3
+      repositories: 
+        - repo01
+        - repo02
+    -
+      projectId: example02
+      members:
+        - bouze
