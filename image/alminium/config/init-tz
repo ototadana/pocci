@@ -1,0 +1,4 @@
+if [ -n "${TZ}" -a -f /usr/share/zoneinfo/${TZ} ]; then
+    rm -f /etc/localtime
+    cp /usr/share/zoneinfo/${TZ} /etc/localtime
+fi
