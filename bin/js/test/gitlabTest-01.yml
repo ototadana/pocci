@@ -3,14 +3,7 @@ gitlab:
     uid:          jenkinsci
     userPassword: password
   groups:
-    groupName: group01
+    groupName:    group01
     projects:
-      projectName: project01
-      issues:
-        - Title Only
-        -
-          title:        Example
-          description:  |
-                        Line 1
-                        Line 2
-                        Line 3
+      projectName:    project01
+      issues:         issue01

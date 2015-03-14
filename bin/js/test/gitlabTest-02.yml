@@ -1,0 +1,22 @@
+gitlab:
+  users:
+    - uid:          jenkinsci
+      userPassword: password
+    - uid:          bouze
+      userPassword: password
+  groups:
+    - groupName: group01
+      projects:
+        - projectName: project01
+          issues:
+            - title:        issue01
+              description:  test
+            - title:        issue02
+              description:  |
+                            Line 1
+                            Line 2
+                            Line 3
+        - projectName: project02
+    - groupName: group02
+      members:
+        - bouze

@@ -1,0 +1,34 @@
+group01:
+  path:   "/groups?search=group01"
+  values:
+    "body.length":  1
+    "body[0].name": "group01"
+
+project01:
+  get:
+    groupId:  "body[0].id@/groups?search=group01"
+  path:   "/projects/search/project01"
+  values:
+    "body.length":            1
+    "body[0].public":         true
+    "body[0].namespace.id":   "${groupId}"
+    "body[0].namespace.name": "group01"
+
+project01_issues:
+  get:
+    projectId: "body[0].id@/projects/search/project01"
+  path: "/projects/${projectId}/issues"
+  values:
+    "body.length":          1
+    "body[0].project_id":   "${projectId}"
+    "body[0].title":        "issue01"
+    "body[0].description":  null
+
+group01_members:
+  get:
+    groupId:  "body[0].id@/groups?search=group01"
+  path:   "/groups/${groupId}/members"
+  values:
+    "body.length":          1
+    "body[0].username":     jenkinsci
+    "body[0].access_level": 50

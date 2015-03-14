@@ -91,7 +91,7 @@ var createRequest = function*(browser, url) {
   };
 };
 
-var getProject = function*(url, request, projectId) {
+var getProject = function*(request, projectId) {
   var response = yield server.get(request('/projects/' + projectId + '.json'));
   if(response.statusCode === 404) {
     return null;
@@ -121,14 +121,14 @@ var createRepository = function(browser, url, projectId, repositoryId) {
     .click('#repository-form > div.box.tabular > p:nth-child(4) > input[type="submit"]:nth-child(3)');
 };
 
-var getUsers = function*(url, request) {
+var getUsers = function*(request) {
   var response = yield server.get(request('/users.json'));
   assertStatus(response, 'response.statusCode < 300');
 
   return response.body.users;
 };
 
-var getProjectMembers = function*(url, request, projectId) {
+var getProjectMembers = function*(request, projectId) {
   var response = yield server.get(request('/projects/' + projectId + '/memberships.json'));
   assertStatus(response, 'response.statusCode < 300');
 
@@ -141,7 +141,7 @@ var getProjectMembers = function*(url, request, projectId) {
   return members;
 };
 
-var addProjectMember = function*(url, request, projectId, login, projectMembers) {
+var addProjectMember = function*(request, projectId, login, projectMembers) {
 
   var addProject = function*(id) {
     var response = yield server.post(
@@ -156,7 +156,7 @@ var addProjectMember = function*(url, request, projectId, login, projectMembers)
     assertStatus(response, 'response.statusCode < 300');
   };
 
-  var users = yield getUsers(url, request);
+  var users = yield getUsers(request);
   for(var i = 0; i < users.length; i++) {
     var user = users[i];
     if(user.login === login) {
@@ -170,17 +170,17 @@ var addProjectMember = function*(url, request, projectId, login, projectMembers)
   throw new Error('cannot find user : ' + login);
 };
 
-var postIssue = function*(url, request, issue) {
+var postIssue = function*(request, issue) {
   var response = yield server.post(request('/issues.json', {'issue' : issue}));
   assertStatus(response, 'response.statusCode < 300');
 };
 
-var putIssue = function*(url, request, issue) {
+var putIssue = function*(request, issue) {
   var response = yield server.put(request('/issues/' + issue.id + '.json', {'issue' : issue}));
   assertStatus(response, 'response.statusCode < 300');
 };
 
-var createIssue = function*(url, request, projectId, issueOrSubject, projectIssues) {
+var createIssue = function*(request, projectId, issueOrSubject, projectIssues) {
   var issue;
 
   if(typeof issueOrSubject === 'object') {
@@ -201,9 +201,9 @@ var createIssue = function*(url, request, projectId, issueOrSubject, projectIssu
   }
 
   if(projectIssue) {
-    yield putIssue(url, request, issue);
+    yield putIssue(request, issue);
   } else {
-    yield postIssue(url, request, issue);
+    yield postIssue(request, issue);
   }
 };
 
@@ -213,14 +213,14 @@ var createRepositories = function(browser, url, projectId, repositories) {
   }
 };
 
-var addProjectMembers = function*(url, request, projectId, members) {
-  var projectMembers = yield getProjectMembers(url, request, projectId);
+var addProjectMembers = function*(request, projectId, members) {
+  var projectMembers = yield getProjectMembers(request, projectId);
   for(var i = 0; i < members.length; i++) {
-    yield addProjectMember(url, request, projectId, members[i], projectMembers);
+    yield addProjectMember(request, projectId, members[i], projectMembers);
   }
 };
 
-var getProjectIssues = function*(url, request, projectId) {
+var getProjectIssues = function*(request, projectId) {
   var response = yield server.get(request('/issues.json?project_id=' + projectId));
   assertStatus(response, 'response.statusCode < 300');
 
@@ -232,10 +232,10 @@ var getProjectIssues = function*(url, request, projectId) {
   return projectIssues;
 };
 
-var createIssues = function*(url, request, projectId, issues) {
-  var projectIssues = yield getProjectIssues(url, request, projectId);
+var createIssues = function*(request, projectId, issues) {
+  var projectIssues = yield getProjectIssues(request, projectId);
   for(var i = 0; i < issues.length; i++) {
-    yield createIssue(url, request, projectId, issues[i], projectIssues);
+    yield createIssue(request, projectId, issues[i], projectIssues);
   }
 };
 
@@ -249,7 +249,7 @@ var addDefaultMembers = function(users) {
 
 var setupProject = function*(browser, url, request, options, users) {
 
-  var project = yield getProject(url, request, options.projectId);
+  var project = yield getProject(request, options.projectId);
   if(!project) {
     createProject(browser, url, options.projectId);
   }
@@ -262,11 +262,11 @@ var setupProject = function*(browser, url, request, options, users) {
 
   var members = options.members || addDefaultMembers(users);
   if(members) {
-    yield addProjectMembers(url, request, options.projectId, members);
+    yield addProjectMembers(request, options.projectId, members);
   }
 
   if(options.issues) {
-    yield createIssues(url, request, options.projectId, toArray(options.issues));
+    yield createIssues(request, options.projectId, toArray(options.issues));
   }
 };
 

@@ -2,6 +2,7 @@
 var server = require('co-request');
 var toArray = require('./util.js').toArray;
 var assertStatus = require('./util.js').assertStatus;
+var adminPassword = '5iveL!fe';
 
 var logout = function*(browser) {
   browser.click('a[href="/users/sign_out"]');
@@ -28,37 +29,33 @@ var newPassword = function*(browser, url, password) {
 };
 
 
-var __loginByAdmin = function*(browser, url, password) {
+var loginByAdmin = function*(browser, url) {
   browser.url(url + '/users/sign_in');
   yield browser.yieldable.call();
   yield browser.yieldable.click('a[href="#tab-signin"]');
   browser
     .setValue('#user_login', 'root')
-    .setValue('#user_password', password)
+    .setValue('#user_password', adminPassword)
     .submitForm('#new_user');
   yield browser.yieldable.call();
 };
 
-var loginByAdmin = function*(browser, url) {
-  var password = '5iveL!fe';
-  yield __loginByAdmin(browser, url, password);
-  yield newPassword(browser, url, password);
-  yield __loginByAdmin(browser, url, password);
-  yield browser.yieldable.call();
+var firstLoginByAdmin = function*(browser, url) {
+  yield loginByAdmin(browser, url);
+  yield newPassword(browser, url, adminPassword);
+  yield loginByAdmin(browser, url);
 };
 
-var getApiAccessKey = function*(browser, url) {
+var createRequest = function*(browser, url) {
   browser.url(url + '/profile/account');
-  return (yield browser.yieldable.getValue('#token'))[0];
-};
+  var key = (yield browser.yieldable.getValue('#token'))[0];
 
-var createRequest = function(url, apiAccessKey) {
   return function(path, body) {
     var request =  {
       url: url + '/api/v3' + path,
       json: true,
       headers: {
-        'PRIVATE-TOKEN': apiAccessKey
+        'PRIVATE-TOKEN': key
       }
     };
     if(body) {
@@ -68,13 +65,10 @@ var createRequest = function(url, apiAccessKey) {
   };
 };
 
-var deleteProject = function*(request, projectName) {
-  var response = 
-    yield server.get(request('/projects/search/' + projectName));
-  var body = response.body[0];
-  if(body && body.id) {
-    yield server.del(request('/projects/' + body.id));
-  }
+var getProjectId = function*(request, projectName) {
+  var response = yield server.get(request('/projects/search/' + projectName));
+  assertStatus(response, 'response.statusCode < 300');
+  return (response.body.length === 0)? null : response.body[0].id;
 };
 
 var createProject = function*(request, projectName, groupId) {
@@ -94,7 +88,7 @@ var addGroupMember = function*(request, groupId, userId) {
       {'user_id': userId, 'access_level': 50}
     )
   );
-  assertStatus(response, 'response.statusCode === 201');
+  assertStatus(response, 'response.statusCode === 201 || response.statusCode === 409');
 };
 
 var getUserMap = function*(request) {
@@ -138,16 +132,48 @@ var addDefaultMembers = function(users) {
 };
 
 var createIssue = function*(request, projectId, issueOrTitle) {
-  var issue;
-  if(typeof issueOrTitle === 'object') {
-    issue = issueOrTitle;
-  } else {
-    issue = {title : '' + issueOrTitle};
-  }
 
-  var response = 
-    yield server.post(request('/projects/' + projectId + '/issues', issue));
-  assertStatus(response, 'response.statusCode === 201');
+  var getIssueId = function*(title) {
+    var response = yield server.get(request('/projects/' + projectId + '/issues'));
+    if(!response.body) {
+      return null;
+    }
+
+    for(var i = 0; i < response.body.length; i++) {
+      if(response.body[i].title === title) {
+        return response.body[i].id;
+      }
+    }
+    return null;
+  };
+
+  var postIssue = function*(id, issue) {
+    var response = 
+      yield server.post(request('/projects/' + projectId + '/issues', issue));
+    assertStatus(response, 'response.statusCode === 201');
+  };
+
+  var putIssue = function*(id, issue) {
+    var response = 
+      yield server.put(request('/projects/' + projectId + '/issues/' + id, issue));
+    assertStatus(response, 'response.statusCode < 300');
+  };
+
+  var newIssue = function() {
+    if(typeof issueOrTitle === 'object') {
+      return issueOrTitle;
+    } else {
+      return  {title : '' + issueOrTitle};
+    }
+  };
+
+  var issue = newIssue();
+  var id = yield getIssueId(issue.title);
+  if(id) {
+    yield putIssue(id, issue);
+  } else {
+    yield postIssue(id, issue);
+  }
 };
 
 var createIssues = function*(request, projectId, issues) {
@@ -157,11 +183,13 @@ var createIssues = function*(request, projectId, issues) {
 };
 
 var setupProject = function*(request, options, groupId) {
-  yield deleteProject(request, options.projectName);
-  var projectId = yield createProject(request, options.projectName, groupId);
+  var projectId = yield getProjectId(request, options.projectName);
+  if(!projectId) {
+    projectId = yield createProject(request, options.projectName, groupId);
+  }
 
   if(options.issues) {
-    yield createIssues(request, projectId, options.issues);
+    yield createIssues(request, projectId, toArray(options.issues));
   }
 };
 
@@ -171,14 +199,10 @@ var setupProjects = function*(request, projects, groupId) {
   }
 };
 
-var deleteGroup = function*(request, groupName) {
-  var response = yield server.get(request('/groups'));
-  for(var i = 0; i < response.body.length; i++) {
-    var body = response.body[i];
-    if(body && body.name === groupName) {
-      yield server.del(request('/groups/' + body.id));
-    }
-  }
+var getGroupId = function*(request, groupName) {
+  var response = yield server.get(request('/groups?search=' + groupName));
+  assertStatus(response, 'response.statusCode < 300');
+  return (response.body.length === 0)? null : response.body[0].id;
 };
 
 var createGroup = function*(request, groupName) {
@@ -187,14 +211,11 @@ var createGroup = function*(request, groupName) {
   return response.body.id;
 };
 
-var setupGroup = function*(browser, url, options, users) {
-
-  var key = yield getApiAccessKey(browser, url);
-  var request = createRequest(url, key);
-
-  yield deleteGroup(request, options.groupName);
-  var groupId = yield createGroup(request, options.groupName);
-
+var setupGroup = function*(request, options, users) {
+  var groupId = yield getGroupId(request, options.groupName);
+  if(!groupId) {
+    groupId = yield createGroup(request, options.groupName);
+  }
   var members = options.members || addDefaultMembers(users);
   if(members) {
     yield addGroupMembers(request, groupId, members);
@@ -205,14 +226,10 @@ var setupGroup = function*(browser, url, options, users) {
   }
 };
 
-var setupGroups = function*(browser, url, groups, users) {
-  yield loginByAdmin(browser, url);
-
+var setupGroups = function*(browser, url, request, groups, users) {
   for(var i = 0; i < groups.length; i++) {
-    yield setupGroup(browser, url, groups[i], users);
+    yield setupGroup(request, groups[i], users);
   }
-
-  yield logout(browser);
 };
 
 var addUsers = function*(browser, url, users) {
@@ -235,10 +252,13 @@ module.exports = {
     }
 
     if(options.groups) {
-      yield setupGroups(browser, url, toArray(options.groups), users);
+      yield firstLoginByAdmin(browser, url);
+      this.request = yield createRequest(browser, url);
+      yield setupGroups(browser, url, this.request, toArray(options.groups), users);
+      yield logout(browser);
     }
   },
   loginByAdmin: loginByAdmin,
-  getApiAccessKey: getApiAccessKey,
+  logout: logout,
   createRequest: createRequest
 };

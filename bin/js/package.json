@@ -10,6 +10,7 @@
     "mocha": "^2.1.0"
   },
   "dependencies": {
+    "cheerio": "^0.18.0",
     "co": "^4.1.0",
     "co-child-process": "0.0.3",
     "co-request": "^0.2.0",
