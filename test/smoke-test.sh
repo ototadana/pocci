@@ -9,4 +9,9 @@ BASE_DIR=$(cd $(dirname $0); pwd)
 ${BASE_DIR}/do-instructions-in-readme.sh ${POCCI_REPO} ${TEMPLATE_NO}
 
 cd ${BASE_DIR}/temp/pocci/bin/js
-../oneoff -e TEMPLATE_NO=${TEMPLATE_NO} iojs grunt smokeTest
+
+if [ "${TEMPLATE_NO}" -eq 1 ]; then
+  ../oneoff -e TEMPLATE_NO=${TEMPLATE_NO} iojs grunt smokeTest gitlab
+else
+  ../oneoff -e TEMPLATE_NO=${TEMPLATE_NO} iojs grunt smokeTest alminium
+fi

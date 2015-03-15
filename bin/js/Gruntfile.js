@@ -1,6 +1,22 @@
 'use strict';
 module.exports = function(grunt) {
   grunt.initConfig({
+    coffee: {
+      lib: {
+        expand: true,
+        cwd: 'lib',
+        src: ['*.coffee'],
+        dest: 'lib',
+        ext: '.js'
+      },
+      test: {
+        expand: true,
+        cwd: 'test',
+        src: ['*.coffee'],
+        dest: 'test',
+        ext: '.js'
+      },
+    },
     jshint: {
       all: {
         options: {
@@ -36,6 +52,7 @@ module.exports = function(grunt) {
   });
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.registerTask('mkdir',
     function() {
@@ -43,7 +60,7 @@ module.exports = function(grunt) {
     }
   );
 
-  grunt.registerTask('basic', ['jshint', 'clean', 'mkdir']);
+  grunt.registerTask('basic', ['coffee', 'jshint', 'clean', 'mkdir']);
   grunt.registerTask('default', ['basic']);
   grunt.registerTask('smokeTest', ['basic', 'mochaTest:smokeTest']);
   grunt.registerTask('ldap', ['basic', 'mochaTest:ldap']);
