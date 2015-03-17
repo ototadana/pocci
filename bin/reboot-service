@@ -1,0 +1,18 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+source ${BASE_DIR}/bin/init-env
+
+PORTAL=http://server
+JENKINS=http://server/jenkins
+SONAR=http://server/sonar
+LDAP=http://server/ldap
+
+${BIN_DIR}/stop-service
+
+${BIN_DIR}/docker-service up -d
+${BIN_DIR}/waitfor ${JENKINS}
+
+${BIN_DIR}/jenkins-slave up -d
+${BIN_DIR}/waitfor ${PORTAL} ${JENKINS} ${SONAR} ${LDAP}
