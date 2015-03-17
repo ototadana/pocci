@@ -8,7 +8,8 @@ RUN git clone https://github.com/alminium/alminium.git
 
 WORKDIR /alminium
 
-RUN sed -i "s/redmine_code_review,default/redmine_code_review,0.6.5/g" /alminium/config/redmine-plugins.lst
+RUN sed -i "s/redmine_code_review,default/redmine_code_review,0.6.5/g" /alminium/config/redmine-plugins.lst \
+    && sed -i "s,PASSENGER_VERSION=.*$,PASSENGER_VERSION=\$(echo \`passenger-config --version\` |sed -e 's/Phusion Passenger //g'),g" /alminium/inst-script/rhel6/post-install
 
 RUN export ALM_HOSTNAME="localhost" \
     && export SSL="N" \
