@@ -6,5 +6,5 @@ source ${BASE_DIR}/bin/init-env
 
 if [ -f ${CONFIG_DIR}/jenkins-slaves.yml ]; then
     cd ${CONFIG_DIR}
-    ${BIN_DIR}/docker-service -f jenkins-slaves.yml "$@"
+    SERVICE_NAME=poccin ${BIN_DIR}/docker-service -f jenkins-slaves.yml "$@"
 fi

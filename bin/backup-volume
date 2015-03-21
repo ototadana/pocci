@@ -1,0 +1,36 @@
+#!/bin/bash
+set -eu
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+source ${BASE_DIR}/bin/init-env
+BACKUP_DIR=${BASE_DIR}/backup/$(date +%Y%m%d-%H%M)
+
+${BIN_DIR}/stop-service
+
+mkdir -p ${BACKUP_DIR}
+
+RESTORE_ALL_SCRIPT=${BACKUP_DIR}/restore-all.sh
+echo '#!/bin/bash' >${RESTORE_ALL_SCRIPT}
+echo 'set -e' >>${RESTORE_ALL_SCRIPT}
+echo 'cd $(dirname $0)' >>${RESTORE_ALL_SCRIPT}
+
+CONTAINERS=`docker ps -a |grep poccis_ |sed -e 's/.*poccis_/poccis_/'`
+for i in ${CONTAINERS}; do
+    VOLUMES=`docker inspect --format='{{range $key, $value := .VolumesRW}}{{print $key " " }}{{end}}' $i`
+    echo "backup : $i:${VOLUMES}"
+    if [ "${VOLUMES}" != "" ];then
+        docker run --name poccir_backup --volumes-from $i -v ${BACKUP_DIR}:/backup --rm ototadana/jenkins-slave-base sudo tar cfz /backup/$i.tar.gz ${VOLUMES}
+        RESTORE_SCRIPT=${BACKUP_DIR}/restore-$i.sh
+        RESTORE_COMMAND='docker run --name poccir_restore --volumes-from '$i' -v ${BACKUP_DIR}:/backup --rm ototadana/jenkins-slave-base sudo bash -c "cd /;find '${VOLUMES}' -mindepth 1 -delete;tar xfz /backup/'$i'.tar.gz"'
+        echo '#!/bin/bash' >${RESTORE_SCRIPT}
+        echo 'set -ex' >>${RESTORE_SCRIPT}
+        echo 'BACKUP_DIR=$(cd $(dirname $0); pwd)' >>${RESTORE_SCRIPT}
+        echo ${RESTORE_COMMAND} >>${RESTORE_SCRIPT}
+        chmod +x ${RESTORE_SCRIPT}
+        echo "./restore-$i.sh" >>${RESTORE_ALL_SCRIPT}
+    fi
+done
+
+chmod +x ${RESTORE_ALL_SCRIPT}
+
+${BIN_DIR}/up-service

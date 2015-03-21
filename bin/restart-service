@@ -4,5 +4,5 @@ set -eu
 BASE_DIR=$(cd $(dirname $0)/..; pwd)
 source ${BASE_DIR}/bin/init-env
 
-cd ${CONFIG_DIR}
-docker-compose -p ${SERVICE_NAME:-poccis} "$@"
+${BIN_DIR}/stop-service
+${BIN_DIR}/up-service

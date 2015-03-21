@@ -9,11 +9,11 @@ remove()
 }
 
 remove ototadana/alminium
-remove ototadana/jenkins
 remove ototadana/jenkins-slave-iojs
 remove ototadana/jenkins-slave-nodejs
 remove ototadana/jenkins-slave-java
 remove ototadana/jenkins-slave-base
+remove ototadana/jenkins
 remove ototadana/openldap
 remove ototadana/phpldapadmin
 remove ototadana/sonarqube

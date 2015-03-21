@@ -1,0 +1,20 @@
+#!/bin/bash
+
+BASE_DIR=$(cd $(dirname $0)/..; pwd)
+source ${BASE_DIR}/bin/init-env
+
+BACKUP_DIR=$1
+if [ -z "${BACKUP_DIR}" ]; then
+    echo "Usage: $0 <backup directory>"
+    echo ''
+    exit 1
+fi
+
+set -eux
+${BIN_DIR}/destroy-service
+${BIN_DIR}/up-service
+${BIN_DIR}/stop-service
+
+${BACKUP_DIR}/restore-all.sh
+
+${BIN_DIR}/up-service

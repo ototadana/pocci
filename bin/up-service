@@ -9,8 +9,6 @@ JENKINS=http://server/jenkins
 SONAR=http://server/sonar
 LDAP=http://server/ldap
 
-${BIN_DIR}/stop-service
-
 ${BIN_DIR}/docker-service up -d
 ${BIN_DIR}/waitfor ${JENKINS}
 
