@@ -28,7 +28,7 @@ RUN echo PerlLoadModule Authen::Simple::LDAP >>/etc/httpd/conf.d/vcs.conf
 COPY ./config/. /config/
 RUN chmod +x /config/*
 
-VOLUME ["/opt/alminium", "/var/opt/alminium", "/var/lib", "/var/log"]
+VOLUME ["/opt/alminium", "/var/opt/alminium", "/var/lib/mysql"]
 EXPOSE 80 3306
 
 ENTRYPOINT ["/config/entrypoint"]

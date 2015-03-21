@@ -12,7 +12,7 @@ RUN wget http://repository.codehaus.org/org/codehaus/sonar-plugins/javascript/so
 COPY ./config/. /config/
 RUN chmod +x /config/*
 
-VOLUME ["/opt/sonar"]
+VOLUME ["/opt/sonar/conf", "/opt/sonar/data", "/opt/sonar/extensions"]
 EXPOSE 9000
 
 ENTRYPOINT ["/config/entrypoint"]
