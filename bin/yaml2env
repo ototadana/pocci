@@ -7,8 +7,7 @@ source ${BASE_DIR}/bin/init-env
 cd ${BASE_DIR}
 
 set +e
-docker run --name poccir_yaml2env -w /app -v `pwd`:/app --rm -it ototadana/jenkins-slave-iojs \
-       iojs -e "require('./bin/js/lib/yaml2env.js')('config/setup.yml')" >${CONFIG_DIR}/.env
+POCCIR_OPTS=" " ${BIN_DIR}/oneoff iojs iojs -e "require('./bin/js/lib/yaml2env.js')('config/setup.yml')" >${CONFIG_DIR}/.env
 RC=$?
 
 set -e

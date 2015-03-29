@@ -1,11 +1,21 @@
 #!/bin/bash
-set -eu
+set -e
 
 BASE_DIR=$(cd $(dirname $0)/..; pwd)
 source ${BASE_DIR}/bin/init-env
 
-if [ ! -f ./.env ]; then
-    cp ${CONFIG_DIR}/.env .
+if [ -z "${POCCIR_OPTS}" ]; then
+    POCCIR_OPTS="--link poccis_nginx_1:server  --link poccis_openldap_1:ldap --env-file ${CONFIG_DIR}/.env"
 fi
 
-docker-compose -p poccir -f ${CONFIG_DIR}/oneoff.yml run --rm "$@"
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <container type> <command> [arg...]"
+    echo ''
+    exit 1
+fi
+
+
+CONTAINER_TYPE="$1"
+shift
+
+docker run --name poccir_${CONTAINER_TYPE} --privileged -w /app -v ${PWD}:/app ${POCCIR_OPTS} --rm -it ototadana/jenkins-slave-${CONTAINER_TYPE} "$@"

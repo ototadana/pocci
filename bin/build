@@ -10,5 +10,5 @@ chmod +x *
 ./create-proxy-env
 
 cd ${JS_DIR}
-docker run --name poccir_build_1 --env-file=../proxy.env -w /app -v `pwd`:/app --rm -it ototadana/jenkins-slave-nodejs npm install --no-bin-links
-docker run --name poccir_build_2 --env-file=../proxy.env -w /app -v `pwd`:/app --rm -it ototadana/jenkins-slave-nodejs /app/node_modules/selenium-standalone/bin/selenium-standalone install
+POCCIR_OPTS="--env-file=../proxy.env" ${BIN_DIR}/oneoff nodejs npm install --no-bin-links
+POCCIR_OPTS="--env-file=../proxy.env" ${BIN_DIR}/oneoff nodejs /app/node_modules/selenium-standalone/bin/selenium-standalone install
