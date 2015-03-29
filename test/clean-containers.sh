@@ -18,7 +18,7 @@ if [ `docker ps |grep "pocci[s|n|r]_" |wc -l` -gt 0 ]; then
     `docker ps |grep "pocci[s|n|r]_" |awk 'BEGIN{printf "docker stop "}{printf $1" "}'`
 fi
 if [ `docker ps -a |grep "pocci[s|n|r]_" |wc -l` -gt 0 ]; then
-    `docker ps -a |grep "pocci[s|n|r]_" |awk 'BEGIN{printf "docker rm "}{printf $1" "}'`
+    `docker ps -a |grep "pocci[s|n|r]_" |awk 'BEGIN{printf "docker rm -v "}{printf $1" "}'`
 fi
 
 if [ -d ${TEMP_DIR} ]; then
