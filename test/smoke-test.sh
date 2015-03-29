@@ -18,6 +18,6 @@ fi
 
 sudo rm -fr ${BASE_DIR}/temp/pocci/backup/*
 ${BASE_DIR}/temp/pocci/bin/backup-volume
-../oneoff -e TEMPLATE_NO=${TEMPLATE_NO} iojs grunt smokeTest ${PORTAL_TEST}
+POCCIR_OPTS_ADD="-e TEMPLATE_NO=${TEMPLATE_NO}" ../oneoff iojs grunt smokeTest ${PORTAL_TEST}
 echo 'y' | ${BASE_DIR}/temp/pocci/bin/restore-volume ${BASE_DIR}/temp/pocci/backup/*
-../oneoff -e TEMPLATE_NO=${TEMPLATE_NO} iojs grunt smokeTest ${PORTAL_TEST}
+POCCIR_OPTS_ADD="-e TEMPLATE_NO=${TEMPLATE_NO}" ../oneoff iojs grunt smokeTest ${PORTAL_TEST}

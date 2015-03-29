@@ -8,6 +8,10 @@ if [ -z "${POCCIR_OPTS}" ]; then
     POCCIR_OPTS="--link poccis_nginx_1:server  --link poccis_openldap_1:ldap --env-file ${CONFIG_DIR}/.env"
 fi
 
+if [ -n "${POCCIR_OPTS_ADD}" ]; then
+    POCCIR_OPTS="${POCCIR_OPTS} ${POCCIR_OPTS_ADD}"
+fi
+
 if [ $# -lt 2 ]; then
     echo "Usage: $0 <container type> <command> [arg...]"
     echo ''
