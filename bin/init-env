@@ -12,6 +12,10 @@ JS_DIR=${BIN_DIR}/js
 TEMP_CONFIG_DIR=${JS_DIR}/config
 CONFIG_DIR=${BASE_DIR}/config
 
+if [ -z "${DOCKER_CLIENT_TIMEOUT}" ]; then
+    export DOCKER_CLIENT_TIMEOUT=240
+fi
+
 assert ${BASE_DIR}
 assert ${BIN_DIR}
 assert ${JS_DIR}
