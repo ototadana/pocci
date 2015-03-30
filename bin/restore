@@ -11,10 +11,18 @@ if [ -z "${BACKUP_DIR}" ]; then
 fi
 
 set -eux
+if [ ! -d ${CONFIG_DIR} ]; then
+    git clone ${BACKUP_DIR}/config/.git ${CONFIG_DIR}
+fi
+
 ${BIN_DIR}/destroy-service
 ${BIN_DIR}/up-service
 ${BIN_DIR}/stop-service
 
 ${BACKUP_DIR}/restore-all.sh
+
+cp -r ${CONFIG_DIR} ${BACKUP_DIR}/config-$(date +%Y%m%d-%H%M)
+rm -fr ${CONFIG_DIR}
+git clone ${BACKUP_DIR}/config/.git ${CONFIG_DIR}
 
 ${BIN_DIR}/up-service

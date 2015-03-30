@@ -5,6 +5,9 @@ BASE_DIR=$(cd $(dirname $0)/..; pwd)
 source ${BASE_DIR}/bin/init-env
 BACKUP_DIR=${BASE_DIR}/backup/$(date +%Y%m%d-%H%M)
 
+${BIN_DIR}/save-config "backup: ${BACKUP_DIR}"
+git clone ${CONFIG_DIR}/.git ${BACKUP_DIR}/config
+
 ${BIN_DIR}/stop-service
 
 mkdir -p ${BACKUP_DIR}
