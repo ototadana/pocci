@@ -12,7 +12,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 ENV JENKINS_HOME /var/jenkins_home
 
-RUN useradd -d ${JENKINS_HOME} -m -s /bin/bash jenkins
+RUN useradd -d ${JENKINS_HOME} -u 1000 -m -s /bin/bash jenkins
 RUN mkdir -p /app && chown jenkins:jenkins /app
 RUN echo "jenkins ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
 
