@@ -14,27 +14,29 @@ Requirement
 
 Usage
 -----
-1.  Clone this repository.
+1.  Change the current user to the user who has uid=1000.
+
+2.  Clone this repository.
 
     ```bash
     git clone https://github.com/ototadana/pocci.git pocci
     cd pocci
     ```
 
-2.  Build setup tools.
+3.  Build setup tools.
 
     ```bash
     cd bin
     bash ./build
     ```
 
-3.  Create `config` directory from template by `generate-config-from-template`.
+4.  Create `config` directory from template by `generate-config-from-template`.
 
     ```bash
     ./generate-config-from-template
     ```
 
-4.  Check and edit the files in `config` directory.
+5.  Check and edit the files in `config` directory.
 
     ```
     config/
@@ -44,13 +46,13 @@ Usage
       - setup.yml           ... User settings
     ```
 
-5.  Create and start services by `create-service`.
+6.  Create and start services by `create-service`.
 
     ```bash
     ./create-service
     ```
 
-6.  Use the services.
+7.  Use the services.
 
     *   http://localhost/ ... GitLab / ALMinium (Redmine)
     *   http://localhost/jenkins ... Jenkins
