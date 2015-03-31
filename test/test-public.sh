@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -ex
 
 BASE_DIR=$(cd $(dirname $0); pwd)
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -ex
 
 POCCI_REPO=$1
 TEMPLATE_NO=$2

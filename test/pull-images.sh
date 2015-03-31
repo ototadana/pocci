@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -e
 
 docker pull ototadana/openldap
 docker pull ototadana/phpldapadmin
