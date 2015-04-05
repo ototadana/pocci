@@ -7,6 +7,9 @@ source ${BASE_DIR}/bin/init-env
 rm -fr ${TEMP_CONFIG_DIR}
 mkdir ${TEMP_CONFIG_DIR}
 cp -r ${CONFIG_DIR}/* ${TEMP_CONFIG_DIR}
+if [ -f ${TEMP_CONFIG_DIR}/jenkins-slaves.yml ]; then
+    rm ${TEMP_CONFIG_DIR}/jenkins-slaves.yml
+fi
 
 cd ${JS_DIR}
 ${BIN_DIR}/oneoff iojs node ./app.js
