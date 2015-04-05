@@ -21,5 +21,15 @@ fi
 
 CONTAINER_TYPE="$1"
 shift
+CONTAINER_NAME=poccir_${CONTAINER_TYPE}
 
-docker run --name poccir_${CONTAINER_TYPE} --privileged -w /app -v ${PWD}:/app ${POCCIR_OPTS} --rm -it ototadana/jenkins-slave-${CONTAINER_TYPE} "$@"
+set +e
+docker run --name ${CONTAINER_NAME} --privileged -w /app -v ${PWD}:/app ${POCCIR_OPTS} --rm -it ototadana/jenkins-slave-${CONTAINER_TYPE} "$@"
+RC=$?
+
+set -e
+if [ `docker ps -a |grep ${CONTAINER_NAME} |wc -l` -gt 0 ]; then
+    docker rm -v ${CONTAINER_NAME}
+fi
+
+exit ${RC}
