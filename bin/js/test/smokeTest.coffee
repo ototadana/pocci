@@ -71,11 +71,11 @@ describe "Login", () ->
           .submitForm("form")
 
         yield browser.yieldable.call()
-
       then: ->
         browser.url("http://server/sonar/")
-        text = (yield browser.yieldable.getText("#nav a span"))[0]
-        assert.equal(text, "jenkinsci")
+        browser.pause(1000)
+        text = (yield browser.yieldable.getText("nav"))[0]
+        assert.ok(text.indexOf("jenkinsci") > -1)
 
 
   it "portal", (done) ->
