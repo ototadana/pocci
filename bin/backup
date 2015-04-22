@@ -17,7 +17,7 @@ echo '#!/bin/bash' >${RESTORE_ALL_SCRIPT}
 echo 'set -e' >>${RESTORE_ALL_SCRIPT}
 echo 'cd $(dirname $0)' >>${RESTORE_ALL_SCRIPT}
 
-CONTAINERS=`docker ps -a |grep poccis_ |sed -e 's/.*poccis_/poccis_/'`
+CONTAINERS=`docker ps -a |grep 'pocci[s|n]_' |sed -e 's/.*pocci/pocci/'`
 for i in ${CONTAINERS}; do
     VOLUMES=`docker inspect --format='{{range $key, $value := .VolumesRW}}{{print $key " " }}{{end}}' $i`
     echo "backup : $i:${VOLUMES}"
